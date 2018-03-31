@@ -1,0 +1,7 @@
+
+*.out
+*.aux
+*.log
+*.synctex.gz
+*.toc
+doc/503_NCAA_Final_Project.pdf
