@@ -1,6 +1,14 @@
 # 503FinalProject
 March Madness Tournament Model
 
+## Assignments
+- Eli
+  - Clustering
+- Mark
+  - Ordinal Regression
+- Andrei
+  - Dimension Reduction
+
 ## Things each model has to have:
 1. Each model should run independently
 1. Each model should be able to run on a variety of transformed data
