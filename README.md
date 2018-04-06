@@ -1,8 +1,25 @@
 Hi another comment
 # 503FinalProject
 March Madness Tournament Model
-## Aim
-Implement a stacking model that is able to predict the round of a tournament play for NCAA Tournaments
+
+## Things each model has to have:
+1. Each model should run independently
+1. Each model should be able to run on a variety of transformed data
+  1. Each model should include variations for running on any number of transformed parameters, etc
+1. Each model should output a single file with the following conventions
+  * The name of the file should be: [model]_ [DataTransform].csv (no spaces)
+    * [model] is the short name for the model
+    * [DataTransform] is one of "orig", "pca", "dimrec", or "other"
+  * Each output file should only have two columns:
+    * The first is an identifier to tell us what team and what year
+      * Perhaps this should be referenced to a standard mapping
+    * The second should be the prediction
+    * The aim of this simple setup is so that we can adapt the stacking model on the fly and not worry about the dependencies between the models
+1. I have a feeling long will love to see CV of this stuff... make sure to include some and possibly output some graphics for it.
+
+## Currently in work
+- RF model
+- NN Model
 
 ## Implementation details
 Need to implement the following:
