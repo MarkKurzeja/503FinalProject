@@ -178,6 +178,19 @@ After all regularly scheduled NCAA basketball games are concluded in mid-March, 
 
 The first step in our analysis was gathering data. There are many decades of team performance data available on the Sports Reference college basketball website free of charge. However, in recent years a number of more advanced metrics have been devised that have been shown to more accurately capture a team's strength. Since this data is only available starting from 1993, we limited our analysis to that timeframe. Our working data set ultimately consisted of 12 continuous quantitative predictors, and one categorical response corresponding to the number of victories a team had in the tournament (ranging from 0 for a team that lost immediately to 6 for a national champion).
 
+The predictors can be thought of as belonging to six broad buckets corresponding to aspects of a team performance:
+
+\begin{itemize}
+	\item Winning percentage, strength of schedule (SOS) and simple rating system (SRS) are all holistic measures.
+	\item Free throw attempt rate (ft\_rate0), free throw attempts per field goal attempt (fta\_per\_fga\_pct), and three-point attempts per field goal attempt (fg3a\_per\_fga\_pct), and assist rate (ast\_pct) all help classify a team's offensive playing style. The idea is that three-point shots are high risk and high reward while free throws are low risk and low reward. Thus teams that attempt more three point shots may have more variable performances from game to game, while teams that attempt more free throws may be more consistent. Teams with higher assist rates should be expected to play more collaboratively, while teams with low assist rates rely more on strong individual performances.
+	\item Total rebound percentage (trb\_pct) captures how well a team recovers the ball following shots missed by either themselves or their opponents.
+	\item True shooting percentage (ts\_pct) and effective field goal percentage (efg\_pct) both capture how well a team shoots the ball.
+	\item Turnover percentage (tov\_pct) captures how well a team is able to avoid allowing the other team to take the ball away (better teams should generally have lower turnover percentages).
+	\item Block percentage (blk\_pct)  captures how well a team is able to block the other team's shots.
+\end{itemize}
+
+It is worth noting that the vast majority of these statistics capture how well a team performs offensively.  
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                              %
 %                            The prediction problem                            %
@@ -190,7 +203,7 @@ Summaries of the predictors are provided below.
 
 \missingfigure{SUMMARY}
 
-At a high level, the first three predictors provide a good sanity check in that they suggest that the teams in the tournament are generally better than average teams. The first quartile for winning percentage (percentage of games that a given team won) is well above 50\% for the teams in our data set. Our teams also generally have strength of schedule (SOS) and simple rating system (SRS) scores well above zero, which is to be expected given that those metrics are designed such that an average team will have a score around zero. It may seem a bit strange at first that stronger teams will tend to have a better SOS score, but this can be explained by the fact that strong teams tend to be in the same conferences as other strong teams, and therefore play other strong teams more frequently.
+At a high level, the first three predictors provide a good sanity check in that they suggest that the teams in the tournament are generally better than average teams. The first quartile for winning percentage (percentage of games that a given team won) is well above 50\% for the teams in our data set. Our teams also generally have strength of schedule and simple rating system scores well above zero, which is to be expected given that those metrics are designed such that an average team will have a score around zero. It may seem a bit strange at first that stronger teams will tend to have a better SOS score, but this can be explained by the fact that strong teams tend to be in the same conferences as other strong teams, and therefore play other strong teams more frequently.
 
 For model selection and interpretation purposes, it is also worth noting that a number of the predictors have unusually large and/or small outliers.
 
@@ -198,7 +211,9 @@ A pairwise scatterplot of the predictors is provided below.
 
 \missingfigure{GGPAIRS--Most important part of report!}
 
-Most of the correlations are relatively small, with a few notable although perhaps unsurprising exceptions. Effective field goal percentage and true shooting percentage are the most strongly correlated predictors ($r \approx 0.96$), which is to be expected given that both measure how well a team shoots the ball. Free throw rate and free throw attempts per field goal attempt ($r \approx 0.922$) both capture how often a team tends to shoot free throws in slightly different ways. Finally, the strong correlations between SRS and wining percentage ($r \approx 0.518$) and SRS and SOS ($r \approx 0.867$) reflect the fact that SRS is meant to capture team performance, adjusted for strength of schedule. These correlations will need to be accounted for during model fitting and evaluation.
+Many of the correlations are relatively small. Unsurprisingly, in some cases where two predictors belong to the same bucket (per the framework above) we notice very strong correlations. Effective field goal percentage and true shooting percentage are the most strongly correlated predictors ($r \approx 0.96$), which is to be expected given that both measure how well a team shoots the ball. Free throw rate and free throw attempts per field goal attempt ($r \approx 0.922$) both capture how often a team tends to shoot free throws in slightly different ways. Finally, the strong correlations between SRS and wining percentage ($r \approx 0.518$) and SRS and SOS ($r \approx 0.867$) reflect the fact that SRS is meant to capture team performance, adjusted for strength of schedule. 
+
+However, there are a few other correlations that are much weaker, but perhaps a little more interesting conceptually. For instance, there is a weak negative correlation between rebounding percentage and free throw attempts per field goal attempt ($r \approx -0.311$), a correlation which does not seem to have an obvious intuitive explanation based on the buckets outlined above. Similarly, both true shooting 
 
 The data projected onto the first two principal components, which only explain about 44\% of the variability within the data set, appear as follows:
 
