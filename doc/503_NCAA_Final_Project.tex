@@ -197,6 +197,8 @@ It is worth noting that the vast majority of these statistics capture how well a
 %                                                                              %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Preliminary Data Exploration}
+
+\subsection{Data Exploration and Visualization}
 We began by performing data exploration and visualization, as well as dimension reduction, to inform our analysis.
 
 Summaries of the predictors are provided below.
@@ -209,7 +211,13 @@ For model selection and interpretation purposes, it is also worth noting that a 
 
 A pairwise scatterplot of the predictors is provided below.
 
-\missingfigure{GGPAIRS--Most important part of report!}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/MoneyMaker}
+	\caption{caption goes here}
+	\label{fig:ggpairs}
+\end{figure}
+
 
 Many of the correlations are relatively small. Unsurprisingly, in some cases where two predictors belong to the same bucket (per the framework above) we notice very strong correlations. Effective field goal percentage and true shooting percentage are the most strongly correlated predictors ($r \approx 0.96$), which is to be expected given that both measure how well a team shoots the ball. Free throw rate and free throw attempts per field goal attempt ($r \approx 0.922$) both capture how often a team tends to shoot free throws in slightly different ways. Finally, the strong correlations between SRS and wining percentage ($r \approx 0.518$) and SRS and SOS ($r \approx 0.867$) reflect the fact that SRS is meant to capture team performance, adjusted for strength of schedule. 
 
@@ -217,9 +225,114 @@ However, there are a few other correlations that are much weaker, but perhaps a 
 
 The data projected onto the first two principal components, which only explain about 44\% of the variability within the data set, appear as follows:
 
-\missingfigure{Principal components}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/PrinComps}
+	\caption{caption goes here}
+	\label{fig:princomps}
+\end{figure}
+
 
 While we do not necessarily observe perfect clustering corresponding to each of the possible win totals, it is encouraging to see that the first principal component in particular seems to do a fairly good job of differentiating weak teams from strong ones, with teams that advanced further in the tournament tending to have lower scores for that component. Although this trend is much less pronounced, it appears that stronger teams may also tend to have slightly higher scores for the second principal component. 
+
+
+\subsection{Ordinal Regression}
+
+When looking at our problem, we ran into an issue with the domain of the response variable - the number of rounds that a given team will make it in the tournament. In particular, our response variable is neither continuous (since it takes on only integer values and is bounded), nor is this a pure classification problem (because their is a natural ordering in the response). As a result, we need to run an ordinal regression, at least in the onset, and see how well the data can be summarized with these approaches before we can move onto more complicated models. 
+
+For the ordinal regression problem, we chose to use the \texttt{rstanarm polr} functions, as this allows us to view the posterior distributions of the coefficients, and determine if any of the coefficients are significant. In order to see the relative effect, we begin by standardizing the variables as well as centering them. Otherwise, the coefficients will not be on the same unit scale and we want to avoid this in our analysis.
+
+We run the checks on the posterior distribution, and see that each of the four chains used have, indeed, converged, there was no divergences in any of the four chains, and the tree-depth was not hit on any of the iterations signaling that the prior distribution on $R^2$ was sufficiently informative enough to ensure that the chains did not explore too distant from the true posterior distribution. For information on how the prior distribution is set up or on the operation of \texttt{rstanarm}, please refer to the guide here: {\color{blue} \url{https://cran.r-project.org/web/packages/rstanarm/rstanarm.pdf}}
+
+% latex table generated in R 3.4.3 by xtable 1.8-2 package
+% Sat Apr 07 15:09:49 2018
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{lrrrrrrr}
+		\toprule
+		Parameter & Rhat & n\_eff & mean & sd & 2.5\% & 50\% & 97.5\% \\ 
+		\midrule
+		games & 1.0 & 1400 & 3.1 & 6.8 & -8.4 & 2.5 & 18.0 \\ 
+		overallwins & 1.0 & 1403 & -3.5 & 11.3 & -28.4 & -2.6 & 15.7 \\ 
+		overalllosses & 1.0 & 1402 & -3.5 & 8.4 & -21.6 & -2.7 & 10.9 \\ 
+		winlosspct & 1.0 & 2000 & -0.4 & 0.7 & -1.7 & -0.4 & 1.0 \\ 
+		srs & 1.0 & 2000 & 0.8 & 0.5 & -0.1 & 0.8 & 1.8 \\ 
+		sos & 1.0 & 2000 & 0.2 & 0.4 & -0.5 & 0.2 & 0.9 \\ 
+		wins\_conf & 1.0 & 2000 & -0.2 & 0.1 & -0.4 & -0.2 & -0.1 \\ 
+		losses\_conf & 1.0 & 2000 & -0.3 & 0.1 & -0.5 & -0.3 & -0.1 \\ 
+		pts & 1.0 & 2000 & -0.4 & 0.5 & -1.3 & -0.4 & 0.5 \\ 
+		opp\_pts & 1.0 & 2000 & 0.5 & 0.4 & -0.2 & 0.5 & 1.2 \\ 
+		fta\_per\_fga\_pct & 1.0 & 2000 & 1.0 & 0.7 & -0.4 & 1.0 & 2.3 \\ 
+		fg3a\_per\_fga\_pct & 1.0 & 2000 & -0.1 & 0.1 & -0.2 & -0.1 & 0.0 \\ 
+		ts\_pct & 1.0 & 2000 & 2.3 & 1.5 & -0.7 & 2.3 & 5.2 \\ 
+		trb\_pct & 1.0 & 2000 & -0.1 & 0.1 & -0.2 & -0.1 & 0.0 \\ 
+		ast\_pct & 1.0 & 2000 & -0.0 & 0.1 & -0.1 & -0.0 & 0.1 \\ 
+		blk\_pct & 1.0 & 2000 & -0.1 & 0.0 & -0.2 & -0.1 & -0.1 \\ 
+		efg\_pct & 1.0 & 2000 & -2.2 & 1.4 & -4.9 & -2.2 & 0.5 \\ 
+		tov\_pct & 1.0 & 2000 & 0.2 & 0.1 & 0.1 & 0.2 & 0.3 \\ 
+		ft\_rate0 & 1.0 & 2000 & -1.5 & 1.0 & -3.3 & -1.5 & 0.4 \\ 
+		0$|$1 & 1.0 & 2000 & -0.2 & 0.1 & -0.3 & -0.2 & -0.0 \\ 
+		1$|$2 & 1.0 & 2000 & 1.5 & 0.1 & 1.4 & 1.5 & 1.7 \\ 
+		2$|$3 & 1.0 & 2000 & 2.8 & 0.1 & 2.6 & 2.8 & 3.0 \\ 
+		3$|$4 & 1.0 & 2000 & 3.9 & 0.1 & 3.6 & 3.9 & 4.2 \\ 
+		4$|$5 & 1.0 & 2000 & 4.8 & 0.2 & 4.4 & 4.8 & 5.2 \\ 
+		5$|$6 & 1.0 & 2000 & 5.7 & 0.2 & 5.3 & 5.7 & 6.2 \\ 
+		mean\_PPD:0 & 1.0 & 2000 & 0.5 & 0.0 & 0.4 & 0.5 & 0.5 \\ 
+		mean\_PPD:1 & 1.0 & 2000 & 0.3 & 0.0 & 0.2 & 0.3 & 0.3 \\ 
+		mean\_PPD:2 & 1.0 & 2000 & 0.1 & 0.0 & 0.1 & 0.1 & 0.2 \\ 
+		mean\_PPD:3 & 1.0 & 2000 & 0.1 & 0.0 & 0.0 & 0.1 & 0.1 \\ 
+		mean\_PPD:4 & 1.0 & 2000 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 \\ 
+		mean\_PPD:5 & 1.0 & 2000 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 \\ 
+		mean\_PPD:6 & 1.0 & 2000 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 \\ 
+		log-posterior & 1.0 & 438 & -1770.7 & 4.7 & -1780.6 & -1770.3 & -1762.4 \\ 
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{../fig/polr_chain_convergence}
+	\caption{captionhere}
+	\label{fig:polrchainconvergence}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{../fig/polr_autocorrelation}
+	\caption{captionhere}
+	\label{fig:polr_autocorrelation}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{../fig/polr_pp}
+	\caption{captionhere}
+	\label{fig:polr_pp}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{../fig/polr_coef}
+	\caption{replace this with the ggplot version saved down}
+	\label{fig:polr_coef}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/polr_tovpct}
+	\caption{captionhere}
+	\label{fig:polrtovpct}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{../fig/polr_residuals}
+	\caption{captionhere}
+	\label{fig:residuals}
+\end{figure}
+
+\missingfigure{Still under construction :)}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                              %
