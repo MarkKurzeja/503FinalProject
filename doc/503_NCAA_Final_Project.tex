@@ -156,13 +156,13 @@
 \begin{document}
 \pagestyle{plain} 
 \title{\rmfamily\normalfont\spacedallcaps{Learning the Madness - NCAA March Madness Predictions}}
-\author{\spacedlowsmallcaps{Andrei Kopelevich $\bullet$ Mark Kurzeja $\bullet$ Eli Shultz }}
+\author{\spacedlowsmallcaps{Andrei Kopelevich $\bullet$ Mark Kurzeja $\bullet$ Eli Schultz }}
 \date{} % no date or \today if you want to insert a date
 
 \maketitle
 
 \begin{abstract}
-	March Madness Predictions are one of the few examples of a nationwide form of prediction competition that happens every year during the conclusion of the NCAA Men's Basketball season. Despite the relatively simple nature of the sport of basketball itself, the tournament is notoriously difficult to predict, and to have a ``perfect bracket'' is improbable that Warren Buffet, a US investor, has famously put a standing bet of \$1MM a year for life if someone can predict a perfect bracket. Most algorithms for predicting the tournament typically attempt to predict the results at the game level. We instead change our focus to predicting how many rounds we expect a team to progress in the tournament, which will allow us to build far more stable predictions and hopefully improve on the odds that we can predict the final state of tournament play for a given year.
+	Every year, millions of people fill out March Madness brackets in attempt to predict the outcome of the NCAA men's basketball tournament. A big part of the draw is that the tournament is notoriously difficult to predict, and predicting a perfect bracket is so improbable that Warren Buffet, a US investor, annually offers \$1MM a year for life to any of his employees who can predict the exact outcome of the tournament. Many algorithms for predicting the tournament attempt to predict results at the individual game level, based on how teams match up with one another. We will instead focus on predicting how many rounds a team will progress in the tournament based on its performance over the course of the preceding season, with the goal of building stable predictions and successfully predicting tournament outcomes.
 \end{abstract}
 
 \tableofcontents
@@ -173,16 +173,39 @@
 %                          NCAA Tournament Background                          %
 %                                                                              %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{NCAA Tournament Background}
-\lipsum
+\section{Background}
+After all regularly scheduled NCAA basketball games are concluded in mid-March, 68 teams are selected to participate in the NCAA tournament. Every game is single elimination, meaning that as soon as a team loses it is eliminated from the tournament. Eight of the 68 teams originally chosen have to compete in so-called play-in games, after which 64 teams remain. We will follow the same framework as that followed by most bracket prediction contests and concern ourselves here with predicting how teams will perform once the field has been narrowed down to 64 contenders. At this point there are $2^{32} \cdot 2^{16} \cdot 2^8 \cdot 2^4 \cdot 2^2 \cdot 2 = 2^{63}$ possible outcomes, which gives one an idea of the scope of this challenge. Predicting a perfect bracket may be impossible, but we will see how close we can get.
+
+The first step in our analysis was gathering data. There are many decades of team performance data available on the Sports Reference college basketball website free of charge. However, in recent years a number of more advanced metrics have been devised that have been shown to more accurately capture a team's strength. Since this data is only available starting from 1993, we limited our analysis to that timeframe. Our working data set ultimately consisted of 12 continuous quantitative predictors, and one categorical response corresponding to the number of victories a team had in the tournament (ranging from 0 for a team that lost immediately to 6 for a national champion).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                              %
 %                            The prediction problem                            %
 %                                                                              %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{The March Madness Prediction Problem}
-\lipsum
+\section{Preliminary Data Exploration}
+We began by performing data exploration and visualization, as well as dimension reduction, to inform our analysis.
+
+Summaries of the predictors are provided below.
+
+\missingfigure{SUMMARY}
+
+At a high level, the first three predictors provide a good sanity check in that they suggest that the teams in the tournament are generally better than average teams. The first quartile for winning percentage (percentage of games that a given team won) is well above 50\% for the teams in our data set. Our teams also generally have strength of schedule (SOS) and simple rating system (SRS) scores well above zero, which is to be expected given that those metrics are designed such that an average team will have a score around zero. It may seem a bit strange at first that stronger teams will tend to have a better SOS score, but this can be explained by the fact that strong teams tend to be in the same conferences as other strong teams, and therefore play other strong teams more frequently.
+
+For model selection and interpretation purposes, it is also worth noting that a number of the predictors have unusually large and/or small outliers.
+
+A pairwise scatterplot of the predictors is provided below.
+
+\missingfigure{GGPAIRS--Most important part of report!}
+
+Most of the correlations are relatively small, with a few notable although perhaps unsurprising exceptions. Effective field goal percentage and true shooting percentage are the most strongly correlated predictors ($r \approx 0.96$), which is to be expected given that both measure how well a team shoots the ball. Free throw rate and free throw attempts per field goal attempt ($r \approx 0.922$) both capture how often a team tends to shoot free throws in slightly different ways. Finally, the strong correlations between SRS and wining percentage ($r \approx 0.518$) and SRS and SOS ($r \approx 0.867$) reflect the fact that SRS is meant to capture team performance, adjusted for strength of schedule. These correlations will need to be accounted for during model fitting and evaluation.
+
+The data projected onto the first two principal components, which only explain about 44\% of the variability within the data set, appear as follows:
+
+\missingfigure{Principal components}
+
+While we do not necessarily observe perfect clustering corresponding to each of the possible win totals, it is encouraging to see that the first principal component in particular seems to do a fairly good job of differentiating weak teams from strong ones, with teams that advanced further in the tournament tending to have lower scores for that component. Although this trend is much less pronounced, it appears that stronger teams may also tend to have slightly higher scores for the second principal component. 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                              %
 %                              Prelim Discussion                               %
