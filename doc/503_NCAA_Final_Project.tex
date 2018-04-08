@@ -205,23 +205,28 @@ Summaries of the predictors are provided below.
 
 \missingfigure{SUMMARY}
 
-At a high level, the first three predictors provide a good sanity check in that they suggest that the teams in the tournament are generally better than average teams. The first quartile for winning percentage (percentage of games that a given team won) is well above 50\% for the teams in our data set. Our teams also generally have strength of schedule and simple rating system scores well above zero, which is to be expected given that those metrics are designed such that an average team will have a score around zero. It may seem a bit strange at first that stronger teams will tend to have a better SOS score, but this can be explained by the fact that strong teams tend to be in the same conferences as other strong teams, and therefore play other strong teams more frequently.
+At a high level, the first three predictors provide a good sanity check in that they suggest that  teams in the tournament are generally better than average teams. The first quartile for winning percentage (percentage of games that a given team won) is well above 50\% for the teams in our data set. Our teams also generally have strength of schedule and simple rating system scores well above zero, which is to be expected given that those metrics are designed such that an average team will have a score around zero. It may seem a bit strange at first that stronger teams will tend to have a better SOS score, but this can be explained by the fact that strong teams tend to be in the same conferences as other strong teams, and therefore play other strong teams more frequently.
 
-For model selection and interpretation purposes, it is also worth noting that a number of the predictors have unusually large and/or small outliers.
+It is also worth noting that a number of the predictors have unusually large and/or small outliers. To visualize high-level trends in the predictors, boxplots of each of the predictors for each of the six tournament win groups are provided below. Some of the predictors, such as assist percentage and the two free-throw related predictors, seem to be fairly similarly distributed across the six groups. However, there are a number of pronounced patterns. For instance, more successful tournament teams generally tend to much higher win-loss percentages, SRS, and SOS scores. This is also true, although to a lesser extent for true shooting percentage, effective field goal percentage, total rebound percentage, and block percentage. Similarly, more successful teams tend to have lower turnover rates. 
 
-A pairwise scatterplot of the predictors is provided below.
+\missingfigure{Rayleigh's Wet Dream}
+
+A pairwise scatterplot of the predictors is provided below. Many of the correlations are relatively small. Unsurprisingly, in some cases where two predictors belong to the same bucket (per the framework above) we notice very strong correlations. Effective field goal percentage and true shooting percentage are the most strongly correlated predictors ($r \approx 0.96$), which is to be expected given that both measure how well a team shoots the ball. Free throw rate and free throw attempts per field goal attempt ($r \approx 0.922$) both capture how often a team tends to shoot free throws in slightly different ways. Finally, the strong correlations between SRS and wining percentage ($r \approx 0.518$) and SRS and SOS ($r \approx 0.867$) reflect the fact that SRS is meant to capture team performance, adjusted for strength of schedule.
 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.7\linewidth]{../fig/MoneyMaker}
 	\caption{caption goes here}
 	\label{fig:ggpairs}
-\end{figure}
+\end{figure} 
 
+However, there are a few other correlations that are much weaker, but perhaps a little more interesting conceptually. For instance, there is a weak negative correlation between rebounding percentage and free throw attempts per field goal attempt ($r \approx -0.311$), a correlation which does not seem to have an obvious intuitive explanation based on the buckets outlined above. Similarly, both true shooting percentage ($r \approx 0.273$) and effective field goal percentage ($r \approx 0.282$) were weakly correlated with three point attempts per field goal attempt.
 
-Many of the correlations are relatively small. Unsurprisingly, in some cases where two predictors belong to the same bucket (per the framework above) we notice very strong correlations. Effective field goal percentage and true shooting percentage are the most strongly correlated predictors ($r \approx 0.96$), which is to be expected given that both measure how well a team shoots the ball. Free throw rate and free throw attempts per field goal attempt ($r \approx 0.922$) both capture how often a team tends to shoot free throws in slightly different ways. Finally, the strong correlations between SRS and wining percentage ($r \approx 0.518$) and SRS and SOS ($r \approx 0.867$) reflect the fact that SRS is meant to capture team performance, adjusted for strength of schedule. 
+Overall, the presence of these correlations suggests that it may be useful to perform PCA in an attempt to reduce overall dimensionality.
 
-However, there are a few other correlations that are much weaker, but perhaps a little more interesting conceptually. For instance, there is a weak negative correlation between rebounding percentage and free throw attempts per field goal attempt ($r \approx -0.311$), a correlation which does not seem to have an obvious intuitive explanation based on the buckets outlined above. Similarly, both true shooting 
+A skree plot of percentage of variance explained against number of principal components used is shown below. 
+
+\missingfigure{Skreeeeee}
 
 The data projected onto the first two principal components, which only explain about 44\% of the variability within the data set, appear as follows:
 
