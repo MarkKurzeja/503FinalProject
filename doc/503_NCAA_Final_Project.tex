@@ -211,7 +211,7 @@ For model selection and interpretation purposes, it is also worth noting that a 
 
 A pairwise scatterplot of the predictors is provided below.
 
-\begin{figure}
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\linewidth]{../fig/MoneyMaker}
 	\caption{caption goes here}
@@ -225,7 +225,7 @@ However, there are a few other correlations that are much weaker, but perhaps a 
 
 The data projected onto the first two principal components, which only explain about 44\% of the variability within the data set, appear as follows:
 
-\begin{figure}
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\linewidth]{../fig/PrinComps}
 	\caption{caption goes here}
@@ -295,52 +295,69 @@ The posterior distributions for the log-odds of the parameters are as follows:
 
 We need to note that the coefficients do not have the most meaningful interpretations, but since they are all standardized, we can use their absolute magnitude and whether their credible intervals contain zero to discern their relevance. If a given credible interval contains zero, we can say that it is reasonably likely that the $\exp(\beta_i) = 1$ which indicates that their is reason to believe that the odds ratio can be one. This is equivalent to saying that there is no significant change in the odds with the use of this coefficient. 
 
+We first aim to explain why the variances of the \texttt{games}, \texttt{overallwins}, and \texttt{overalllosses} variables have such high variance relative to the other variables. To see this, we will plot the ggpairs plot of the posteriors to determine what is going on.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/polr_correlation}
+	\caption{We can see that games, overallwins, and overall losses are highly correlated with one another. As a result, we are getting a case of the "bouncing betas" that we encounter in simple linear regression - this is something that we should account for because the coefficients are basically fighting one another for significance in the model and we have a high amount of collinearity. When we look at the model, we see that games correlates highly with overall wins and overall wins correlates highly with overall losses.}
+	\label{fig:polrcorrelation}
+\end{figure}
+
+\missingfigure{Working to update the model without the games and overall loses variable}
+
 We begin by looking for those coefficients that do not contain zero in their confidence interval
 \begin{description}
-	\item[wins\_conf] We can see that the wins number inter-conference has a negative coefficient but the magnitude of the coefficient does not indicate that it is practically significant as the odd's of changing levels in the tournament are only affected by about  22\% ($\exp(-0.1) \approx 1.22$) (positivity). Since the odds are increasing, this indicates that teams that tend to play and win more conference games tend to do better in the tournament. This result makes sense. 
-	\item[loses\_conf] The mean of this term is, like the wins\_conf pretty insignificant from a practical standpoint as it only increases the odds by about 34\% ($\exp(.34) = 1.33$). The sign of this coefficient seems to be counter intutitve as we would expect the wins to have a positve effect on the odds and the losses to have a negative effect on the odds. I think that the fact that the increase in odds for these varaibles indicate that those teams that tend to play a larger number of games than their opponents during the season tend to do better in the tournament. This could makes sense as schoools that are smaller tend to do worse in the tournament.  
-	\item[blk\_pct] \missingfigure{complete}
+	\item[wins\_conf] We can see that the wins number inter-conference has a negative coefficient but the magnitude of the coefficient does not indicate that it is practically significant as the odds of changing levels in the tournament are only affected by about  22\% ($\exp(-0.1) \approx 1.22$) (positivity). Since the odds are increasing, this indicates that teams that tend to play and win more conference games tend to do better in the tournament. This result makes sense. 
+	\item[loses\_conf] The mean of this term is, like the wins\_conf pretty insignificant from a practical standpoint as it only increases the odds by about 34\% ($\exp(.34) = 1.33$). The sign of this coefficient seems to be counter intuitive as we would expect the wins to have a positive effect on the odds and the losses to have a negative effect on the odds. I think that the fact that the increase in odds for these variables indicate that those teams that tend to play a larger number of games than their opponents during the season tend to do better in the tournament. This could makes sense as schools that are smaller tend to do worse in the tournament.  
+	\item[blk\_pct] Accounting for the blocking percentage, this tells us that for every standard deviation that a team blocks above the average, the odds of them winning increase by about 10\% which is in line with our intuition. Given how devastating certain blocks can be to the psyche of the other team, and how critical often a few points are in the tournament, the ability to block is a feature that we expected to be critical to the performance of a team.
 \end{description}
 
 
 
 
-\begin{figure}
-	\centering
-	\includegraphics[width=1\linewidth]{../fig/polr_chain_convergence}
-	\caption{We can see that each of the chains converged more or less to the same distributions which indicates that our exploration of the posterior did not stay on local maximize along our chain - inference from the four chains should be OK since they agree on the posterior.}
-	\label{fig:polrchainconvergence}
-\end{figure}
 
-\begin{figure}
+
+
+
+\begin{figure}[H]
 	\centering
-	\includegraphics[width=1\linewidth]{../fig/polr_autocorrelation}
+	\includegraphics[width=1\linewidth]{../fig/polr_autocorr}
 	\caption{The autocorrelation on all of the parameters looked similar to the auto-correlation above - we can see that the posterior was explored throughly and the chains did not get stuck for long in any one particular area. }
 	\label{fig:polr_autocorrelation}
 \end{figure}
 
-\begin{figure}
+%\begin{figure}
+%	\centering
+%	\includegraphics[width=1\linewidth]{../fig/polr_pp}
+%	\caption{The upper left histogram is the true distribution of the factor levels of $y$. We can see that their are seven levels - each one half the size of the preceding bar since a team either makes it or does not make it to the next round. We can see that the posterior predictive distributions more or less seem to capture this well, but we can see that for levels greater than four (i.e. for teams that made it to the final four) the ordinal regression model fails to predict well in these tails. As a result, this may be something that we need to correct for when looking at the final four contenders.}
+%	\label{fig:polr_pp}
+%\end{figure}
+
+\begin{figure}[H]
 	\centering
-	\includegraphics[width=1\linewidth]{../fig/polr_pp}
-	\caption{The upper left histogram is the true distribution of the factor levels of $y$. We can see that their are seven levels - each one half the size of the preceding bar since a team either makes it or does not make it to the next round. We can see that the posterior predictive distributions more or less seem to capture this well, but we can see that for levels greater than four (i.e. for teams that made it to the final four) the ordinal regression model fails to predict well in these tails. As a result, this may be something that we need to correct for when looking at the final four contenders.}
-	\label{fig:polr_pp}
+	\includegraphics[width=0.7\linewidth]{../fig/polr_nonames_pp}
+	\caption{This is a summary of the posterior predictive distribution for the first model that we have run with ordinal regression. We can see that the posterior is one of seven counts, we can see that if we run simulation from the predictive posterior, the counts that we get are right in line with what we observed. This indicates that the model is capturing the frequency of the counts in its inference which is important if we are not going to under bias or over bias any particular outcome. We can see that, especially at $wins = 0$, that the count is bias downwards however. We will fit a more complicated model that takes into teams individual performance shortly which will hopefully fix this bias.}
+	\label{fig:polrnonamespp}
 \end{figure}
 
-\begin{figure}
+
+
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=1\linewidth]{../fig/polr_coef}
 	\caption{replace this with the ggplot version saved down}
 	\label{fig:polr_coef}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\linewidth]{../fig/polr_tovpct}
-	\caption{captionhere}
+	\caption{The turn-over percentage(tov\_pct) has a positive coefficient which makes sense in the context of the problem. For every standard deviation that a team turns over the ball more than the field on average, we see about a 19\% change in the odds that they lose. This is significant and is in-line with intuition that turnovers can be the critical factor in a tight game in the tournament}
 	\label{fig:polrtovpct}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=1\linewidth]{../fig/polr_residuals}
 	\caption{captionhere}
@@ -348,6 +365,21 @@ We begin by looking for those coefficients that do not contain zero in their con
 \end{figure}
 
 \missingfigure{Still under construction :) - include the results of working with the names model}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/polr_name_pp}
+	\caption{If we include the names as variables, we can see that the posterior predictive distribution frequency count is almost spot on with what we observe. This makes sense that our predictions would get better accounting for the individual team variability in the model, but we need to find out if the prediction that comes from this model is something that outperforms the simpler model and is not bias downwards on the predictions of how many people are going to make the tournament, but it is not a drastically improved fit.}
+	\label{fig:polrnamepp}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/polr_team_log_odds}
+	\caption{We can see that the 95\% posterior interval for each of the teams is centered around, and contains zero. This is an indication that for no team in the tournament does their name, controlling for things like shooting percentage performance, account for over or under performance. This finding was highly surprising to us, as we expected certain powerhouse schools like Kentucky to outperform other schools systemically in the tournament but we can see that even the powerhouse teams rely on the fundamentals just as much as everyone else.}
+	\label{fig:polrteamlogodds}
+\end{figure}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                              %

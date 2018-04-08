@@ -5,7 +5,7 @@ March Madness Tournament Model
 - Eli
   - Clustering
 - Mark
-  - Ordinal Regression
+  - Ordinal Regression - done and available for review
 - Andrei
   - Dimension Reduction
 
