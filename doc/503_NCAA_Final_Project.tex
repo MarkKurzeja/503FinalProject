@@ -309,9 +309,33 @@ We first aim to explain why the variances of the \texttt{games}, \texttt{overall
 	\label{fig:polrcorrelation}
 \end{figure}
 
-\missingfigure{Working to update the model without the games and overall loses variable}
+We also see that there are some pretty strong correlations between the effective field goal percentage, total shooting percentage, and other variables. We aim to reduce the multi-collinearity in the model by removing those terms that have significant correlation with one another, and then we refit the model. 
+
+
+The in-sample performance of the Bayesian regression method is given by the following 7x7 confusion matrix (the left column is the true values and the top row is the predicted values):
+\begin{figure}[H]
+	\centering
+	% latex table generated in R 3.4.3 by xtable 1.8-2 package
+	% Sun Apr 08 14:53:18 2018
+		\begin{tabular}{r|cccccc}
+			\toprule
+			& 0 & 1 & 2 & 3 & 4 & 6 \\ 
+			\midrule
+			0 & 685 &  89 &   0 &   0 &   0 &   0 \\ 
+			1 & 215 & 178 &  15 &   0 &   1 &   0 \\ 
+			2 &  43 & 116 &  29 &   5 &   0 &   0 \\ 
+			3 &   1 &  46 &  35 &  16 &   0 &   0 \\ 
+			4 &   0 &   9 &  23 &  13 &   1 &   1 \\ 
+			5 &   0 &   3 &   5 &  11 &   1 &   5 \\ 
+			6 &   0 &   0 &   4 &  12 &   4 &   4 \\ 
+			\bottomrule
+		\end{tabular}
+\caption{We can see that the algorithm is good at separating out the first round losers given that it only incorrectly classifies 89 of the teams that lost in the first round as going onto the second round. As we get into the middle rounds, however, we can see that it is much harder to classify correctly, and the regression downward biases the results - we can see that of those that make it to the fourth round, it has terrible performance at predicting that is the case. Similarity, it does not predict that anyone would make the fifth round which is troublesome considering that by the design of the tournament $4/64$ of the teams make it to the final four. This shows us that the data is just very difficult to work with, and that it is very noisy even in sample. March is, indeed, Mad.}
+\end{figure}
+
 
 We begin by looking for those coefficients that do not contain zero in their confidence interval
+\missingfigure{This needs to be updated now that the algo has been rerun}
 \begin{description}
 	\item[wins\_conf] We can see that the wins number inter-conference has a negative coefficient but the magnitude of the coefficient does not indicate that it is practically significant as the odds of changing levels in the tournament are only affected by about  22\% ($\exp(-0.1) \approx 1.22$) (positivity). Since the odds are increasing, this indicates that teams that tend to play and win more conference games tend to do better in the tournament. This result makes sense. 
 	\item[loses\_conf] The mean of this term is, like the wins\_conf pretty insignificant from a practical standpoint as it only increases the odds by about 34\% ($\exp(.34) = 1.33$). The sign of this coefficient seems to be counter intuitive as we would expect the wins to have a positive effect on the odds and the losses to have a negative effect on the odds. I think that the fact that the increase in odds for these variables indicate that those teams that tend to play a larger number of games than their opponents during the season tend to do better in the tournament. This could makes sense as schools that are smaller tend to do worse in the tournament.  
