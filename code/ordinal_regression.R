@@ -90,34 +90,51 @@ ggsave("../fig/polr_correlation.pdf", device = "pdf", height = 4, width = 6)
 # save(post0, file = "polr_model_results.stan")
 load(file = "./polr_model_results.stan")
 
-post0_updated <- stan_polr(schoolwins ~ ., data = scaled_train_data %>% select(-games, -overalllosses), 
+# Remove the multicolinearlity
+post0_updated <- stan_polr(schoolwins ~ (.)^2, data = scaled_train_data %>% select(-overallwins, -games, - efg_pct), 
                    prior = R2(0.05), prior_counts = dirichlet(1),
                    chains = 4, cores = 8, seed = 123, iter = 1000)
+# save(post0_updated, file = "polr_model_results_updated.stan")
+load(file = "./polr_model_results_updated.stan")
 
 
-pp_check(post0, plotfun = "bars")
+pp_check(post0_updated, plotfun = "bars")
 ggsave("../fig/polr_nonames_pp.pdf", device = "pdf", height = 4, width = 6)
+# 
+# post0_updated %>% as.matrix() %>% as.data.frame() %>% .[,1:17] %>% head() %>%
+#   {adply(.data = ., 2, .fun = function(i) {
+#     data.frame(mean(i, na.rm = T))
+#   })}
 
 
 # launch_shinystan(post0)
-# launch_shinystan(post0_highcor)
+# launch_shinystan(post0_updated)
 
 
-np <- bayesplot::nuts_params(post0)
+np <- bayesplot::nuts_params(post0_updated)
 bayesplot::mcmc_nuts_energy(np) 
 ggsave("../fig/polr_chain_convergence.pdf", device = "pdf", height = 4, width = 6)
 
-rstan::stan_ac(post0, pars = c("games", "wins_conf", "pts", "ts_pct"), fill = "blue", color = "blue", nrow = 2, ncol = 2)
+rstan::stan_ac(post0_updated, pars = c("overalllosses", "wins_conf", "pts", "ts_pct"), fill = "blue", color = "blue", nrow = 2, ncol = 2)
 ggsave("../fig/polr_autocorr.pdf", device = "pdf", height = 4, width = 6)
 
+
+
+# See how it predicts in_sample
+k <- posterior_predict(post0, scaled_train_data, draws = 2000)
+pred_result <- apply(k, 2, function(i) {
+  sort(table(i), decreasing = T) %>% names() %>% .[1] %>% as.numeric()
+})
+table(scaled_train_data$schoolwins %>% as.numeric() %>% {.-1}, pred_result)  %>% xtable::xtable()
+
+
 # Get the estimates of the coefficients
-post0_points <- as.matrix(post0) %>% 
+post0_points <- as.matrix(post0_updated) %>% 
   as.data.frame() %>% 
-  {.[,1:19]} %>% 
+  {.[,1:17]} %>% 
   {apply(., 2, median)}
-
-
-posterior_interval(post0, prob = .95)[1:19,1:2] %>% 
+# Plot the posterior intervals
+posterior_interval(post0_updated, prob = .95)[1:17,1:2] %>% 
   as.data.frame() %>% 
   mutate(param = rownames(.), median = post0_points) %>% 
   ggplot(.) + 
