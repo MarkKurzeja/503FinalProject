@@ -199,7 +199,13 @@ At a high level, the first three predictors provide a good sanity check in that 
 
 It is also worth noting that a number of the predictors have unusually large and/or small outliers. To visualize high-level trends in the predictors, boxplots of each of the predictors for each of the six tournament win groups are provided below. Some of the predictors, such as assist percentage and the two free-throw related predictors, seem to be fairly similarly distributed across the six groups. However, there are a number of pronounced patterns. For instance, more successful tournament teams generally tend to much higher win-loss percentages, SRS, and SOS scores. This is also true, although to a lesser extent for true shooting percentage, effective field goal percentage, total rebound percentage, and block percentage. Similarly, more successful teams tend to have lower turnover rates. 
 
-\missingfigure{Rayleigh's Wet Dream}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/RayleighWetDream}
+	\caption{caption goes here}
+	\label{fig:rayleighwetdream}
+\end{figure}
+
 
 A pairwise scatterplot of the predictors is provided below. Many of the correlations are relatively small. Unsurprisingly, in some cases where two predictors belong to the same bucket (per the framework above) we notice very strong correlations. Effective field goal percentage and true shooting percentage are the most strongly correlated predictors ($r \approx 0.96$), which is to be expected given that both measure how well a team shoots the ball. Free throw rate and free throw attempts per field goal attempt ($r \approx 0.922$) both capture how often a team tends to shoot free throws in slightly different ways. Finally, the strong correlations between SRS and wining percentage ($r \approx 0.518$) and SRS and SOS ($r \approx 0.867$) reflect the fact that SRS is meant to capture team performance, adjusted for strength of schedule.
 
@@ -235,7 +241,7 @@ While we do not necessarily observe perfect clustering corresponding to each of 
 
 When looking at our problem, we ran into an issue with the domain of the response variable - the number of rounds that a given team will make it in the tournament. In particular, our response variable is neither continuous (since it takes on only integer values and is bounded), nor is this a pure classification problem (because their is a natural ordering in the response). As a result, we need to run an ordinal regression, at least in the onset, and see how well the data can be summarized with these approaches before we can move onto more complicated models. 
 
-For the ordinal regression problem, we chose to use the \texttt{rstanarm polr} functions, as this allows us to view the posterior distributions of the coefficients, and determine if any of the coefficients are significant. In order to see the relative effect, we begin by standardizing the variables as well as centering them. Otherwise, the coefficients will not be on the same unit scale and we want to avoid this in our analysis. We begin by excluding the teams names themselves to see if the other predictor variables can be used to discern perforamnce. 
+For the ordinal regression problem, we chose to use the \texttt{rstanarm polr} functions, as this allows us to view the posterior distributions of the coefficients, and determine if any of the coefficients are significant. In order to see the relative effect, we begin by standardizing the variables as well as centering them. Otherwise, the coefficients will not be on the same unit scale and we want to avoid this in our analysis. We begin by excluding the teams names themselves to see if the other predictor variables can be used to discern performance. 
 
 We run the checks on the posterior distribution, and see that each of the four chains used have, indeed, converged, there was no divergences in any of the four chains, and the tree-depth was not hit on any of the iterations signaling that the prior distribution on $R^2$ was sufficiently informative enough to ensure that the chains did not explore too distant from the true posterior distribution. For information on how the prior distribution is set up or on the operation of \texttt{rstanarm}, please refer to the guide here: {\color{blue} \url{https://cran.r-project.org/web/packages/rstanarm/rstanarm.pdf}}
 
