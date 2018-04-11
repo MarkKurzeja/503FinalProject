@@ -193,11 +193,16 @@ We began by performing data exploration and visualization, as well as dimension 
 
 Summaries of the predictors are provided below.
 
-\missingfigure{SUMMARY}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/Summary}
+	\caption{caption goes here}
+	\label{fig:summary}
+\end{figure} 
 
 At a high level, the first three predictors provide a good sanity check in that they suggest that  teams in the tournament are generally better than average teams. The first quartile for winning percentage (percentage of games that a given team won) is well above 50\% for the teams in our data set. Our teams also generally have strength of schedule and simple rating system scores well above zero, which is to be expected given that those metrics are designed such that an average team will have a score around zero. It may seem a bit strange at first that stronger teams will tend to have a better SOS score, but this can be explained by the fact that strong teams tend to be in the same conferences as other strong teams, and therefore play other strong teams more frequently.
 
-It is also worth noting that a number of the predictors have unusually large and/or small outliers. To visualize high-level trends in the predictors, boxplots of each of the predictors for each of the six tournament win groups are provided below. Some of the predictors, such as assist percentage and the two free-throw related predictors, seem to be fairly similarly distributed across the six groups. However, there are a number of pronounced patterns. For instance, more successful tournament teams generally tend to much higher win-loss percentages, SRS, and SOS scores. This is also true, although to a lesser extent for true shooting percentage, effective field goal percentage, total rebound percentage, and block percentage. Similarly, more successful teams tend to have lower turnover rates. 
+It is also worth noting that a number of the predictors have unusually large and/or small outliers. To visualize high-level trends in the predictors, boxplots of each of the predictors for each of the six tournament win groups are provided below. Some of the predictors, such as assist percentage and the two free-throw related predictors, seem to be fairly similarly distributed across the six groups. However, there are a number of pronounced patterns. For instance, more successful tournament teams generally tend to much higher win-loss percentages, SRS, and SOS scores. This is also true, although to a lesser extent, for true shooting percentage, effective field goal percentage, total rebound percentage, and block percentage. Similarly, more successful teams tend to have lower turnover rates. 
 
 \begin{figure}[H]
 	\centering
@@ -216,15 +221,20 @@ A pairwise scatterplot of the predictors is provided below. Many of the correlat
 	\label{fig:ggpairs}
 \end{figure} 
 
-However, there are a few other correlations that are much weaker, but perhaps a little more interesting conceptually. For instance, there is a weak negative correlation between rebounding percentage and free throw attempts per field goal attempt ($r \approx -0.311$), a correlation which does not seem to have an obvious intuitive explanation based on the buckets outlined above. Similarly, both true shooting percentage ($r \approx 0.273$) and effective field goal percentage ($r \approx 0.282$) were weakly correlated with three point attempts per field goal attempt.
+However, there are a few other correlations that are much weaker, but perhaps a little more interesting for the purposes of our model. For instance, there is a weak negative correlation between rebounding percentage and free throw attempts per field goal attempt ($r \approx -0.311$), a correlation which does not seem to have an obvious intuitive explanation based on the buckets outlined above. Similarly, both true shooting percentage ($r \approx 0.273$) and effective field goal percentage ($r \approx 0.282$) were weakly correlated with three point attempts per field goal attempt.
 
-Overall, the presence of these correlations suggests that it may be useful to perform PCA in an attempt to reduce overall dimensionality.
+Overall, the presence of these correlations suggests that it may be useful to perform PCA in an attempt to reduce overall dimensionality for the purposes of preliminary investigation and visualization.
 
 A skree plot of percentage of variance explained against number of principal components used is shown below. 
 
-\missingfigure{Skreeeeee}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/Skreeeeee}
+	\caption{caption goes here}
+	\label{fig:Skreeeeee}
+\end{figure}
 
-The data projected onto the first two principal components, which only explain about 44\% of the variability within the data set, appear as follows:
+From a numeric standpoint, there is no obvious cutoff here. We do see that that the fourth principal component explains much less of the variance than the third, but it still explains about 10\% of the variance, and thus cannot be easily discarded. However, for visualization purposes we will look at plots of the data projected onto all three possible pairwise combinations of the first three principal components.
 
 \begin{figure}[H]
 	\centering
@@ -234,8 +244,9 @@ The data projected onto the first two principal components, which only explain a
 \end{figure}
 
 
-While we do not necessarily observe perfect clustering corresponding to each of the possible win totals, it is encouraging to see that the first principal component in particular seems to do a fairly good job of differentiating weak teams from strong ones, with teams that advanced further in the tournament tending to have lower scores for that component. Although this trend is much less pronounced, it appears that stronger teams may also tend to have slightly higher scores for the second principal component. 
+While we do not necessarily observe perfect clustering corresponding to each of the possible win totals, it is encouraging to see that in general the principal components seem to separate better-performing teams (represented by the lighter colors above) from weaker teams (represented by the darker blue above). 
 
+Although it only explains roughly 25\% of the variance in the data, the first principal component in particular seems to do a fairly good job of differentiating weak teams from strong ones, with teams that advanced further in the tournament tending to have lower scores for that component. The first principal component can roughly be interpreted as a negative average of winning percentage, SOS, SRS, effective field goal percentage, and true shooting percentage (although there are small contributions from a few other variables as well). In context, this result suggests that just looking at team's overall performance and ability to shoot gives a decent first order idea of whether or not it will perform well in the tournament.
 
 \subsection{Ordinal Regression}
 
