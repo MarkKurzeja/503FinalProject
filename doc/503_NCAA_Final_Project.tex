@@ -293,7 +293,7 @@ We also see that there are some pretty strong correlations between the effective
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\linewidth]{../fig/polr_nonames_pp}
-	\caption{This is a summary of the posterior predictive distribution for the first model that we have run with ordinal regression. We can see that the posterior is one of seven counts, we can see that if we run simulation from the predictive posterior, the counts that we get are right in line with what we observed. This indicates that the model is capturing the frequency of the counts in its inference which is important if we are not going to under bias or over bias any particular outcome. We can see that, especially at $wins = 0$, that the count is bias downwards however. We will fit a more complicated model that takes into teams individual performance shortly which will hopefully fix this bias.}
+	\caption{This is a summary of the posterior predictive distribution for the first model that we have run with ordinal regression. We can see that the posterior is one of seven counts, we can see that if we run simulation from the predictive posterior, the counts that we get are right in line with what we observed. This indicates that the model is capturing the frequency of the counts in its inference which is important if we are not going to under bias or over bias any particular outcome. We can see that, especially at $wins = 0$, that the count is bias downwards, however, which makes sense given the imbalance of the representation of the zero count variables.}
 	\label{fig:polrnonamespp}
 \end{figure}
 
@@ -331,13 +331,12 @@ All of the other coefficients contain zero in their confidence interval which in
 
 
 \subsubsection{In-Sample Performance}
-The in-sample performance of the ordinal regression method is given by the following 7x7 confusion matrix (the left column is the true values and the top row is the predicted values):
+The in-sample performance of the ordinal regression method is given by the following 7x7 confusion matrix (the left column is the true values and the top row is the predicted values). We given the in-sample error not to show our prediction accuracy, but as a method of model checking. Our inference that we hoped to gain from the ordinal regression model was more inferential than predictive, and the in-sample error is a good indication of the fit of the model then it is a sign of the predictive accuracy of the model. 
 \begin{figure}[H]
 	\centering
 	\input{"../fig/polr_predictions.txt"}
 \caption{On the left are the true classes and along the top are the predictions from the ordinal regression analysis using the \textit{argmax} of the posterior to discern what the choice of the Bayesian interpretation of the ordinal regression would predict. We can see that the model is decent at classifying the early rounds - of the teams that were eliminated in the first round, 636 were classified correctly, 135 were incorrectly classified as going to the first round, and 3 were projected to go to the second round. However, the model also appears downwards biased. We can see that of the teams that won the tournament, the model sometimes only said that they would make it one round, and we can see that the model was not able to identify those teams that made it to the finals easily - there were no teams for which we predicted five rounds of advancement. This class may be very hard to identify in general.}
 \end{figure}
-
 
 
 
