@@ -249,63 +249,26 @@ While we do not necessarily observe perfect clustering corresponding to each of 
 Although it only explains roughly 25\% of the variance in the data, the first principal component in particular seems to do a fairly good job of differentiating weak teams from strong ones, with teams that advanced further in the tournament tending to have lower scores for that component. The first principal component can roughly be interpreted as a negative average of winning percentage, SOS, SRS, effective field goal percentage, and true shooting percentage (although there are small contributions from a few other variables as well). In context, this result suggests that just looking at team's overall performance and ability to shoot gives a decent first order idea of whether or not it will perform well in the tournament.
 
 \subsection{Ordinal Regression}
+\subsubsection{Overview}
+When looking at our problem, we ran into an issue with the domain of the response variable - the number of rounds that a given team will make it in the tournament. In particular, our response variable is neither continuous (since it takes on only integer values and is bounded), nor is this a pure classification problem (because their is a natural ordering in the response). As a result, we need to run an ordinal regression, at least in the onset, and see how well the data can be summarized with these approaches before we can move onto more complicated models. We aim to identify interesting variables and gain further insight into the structure of our problem.  
 
-When looking at our problem, we ran into an issue with the domain of the response variable - the number of rounds that a given team will make it in the tournament. In particular, our response variable is neither continuous (since it takes on only integer values and is bounded), nor is this a pure classification problem (because their is a natural ordering in the response). As a result, we need to run an ordinal regression, at least in the onset, and see how well the data can be summarized with these approaches before we can move onto more complicated models. 
+\subsubsection{Fitting the First Model}
+For the ordinal regression problem, we chose to use the \texttt{rstanarm polr} functions, as this allows us to view the posterior distributions of the coefficients, and determine the uncertainty that we have around each of our estimates. We chose to do the Bayesian variant of ordinal regression as sports data is notoriously noisy and most predictors will have little relationship with our outcome of interest. We need to quantify errors more precisely as a result, and this method allows us to do so. We begin by standardizing the variables means and variance. Otherwise, the coefficients will not be on the same unit scale and we want to avoid this in our analysis. We begin by excluding the teams names themselves to see if the other predictor variables can be used to discern performance. 
 
-For the ordinal regression problem, we chose to use the \texttt{rstanarm polr} functions, as this allows us to view the posterior distributions of the coefficients, and determine if any of the coefficients are significant. In order to see the relative effect, we begin by standardizing the variables as well as centering them. Otherwise, the coefficients will not be on the same unit scale and we want to avoid this in our analysis. We begin by excluding the teams names themselves to see if the other predictor variables can be used to discern performance. 
-
-We run the checks on the posterior distribution, and see that each of the four chains used have, indeed, converged, there was no divergences in any of the four chains, and the tree-depth was not hit on any of the iterations signaling that the prior distribution on $R^2$ was sufficiently informative enough to ensure that the chains did not explore too distant from the true posterior distribution. For information on how the prior distribution is set up or on the operation of \texttt{rstanarm}, please refer to the guide here: {\color{blue} \url{https://cran.r-project.org/web/packages/rstanarm/rstanarm.pdf}}
+After running the model, we run the checks on the posterior distribution, and see that each of the four chains used have, indeed, converged, there was no divergences in any of the four chains, and the tree-depth was not hit on any of the iterations signaling that the prior distribution on $R^2$ was sufficiently informative enough to ensure that the chains did not explore too distant from the true posterior distribution. For information on how the prior distribution is set up or on the operation of \texttt{rstanarm}, please refer to the guide here: {\color{blue} \url{https://cran.r-project.org/web/packages/rstanarm/rstanarm.pdf}}
 
 The posterior distributions for the log-odds of the parameters are as follows:
 
-% latex table generated in R 3.4.3 by xtable 1.8-2 package
-% Sat Apr 07 15:09:49 2018
-\begin{table}[ht]
+\begin{figure}[H]
 	\centering
-	\begin{tabular}{lrrrrrrr}
-		\toprule
-		Parameter & Rhat & n\_eff & mean & sd & 2.5\% & 50\% & 97.5\% \\ 
-		\midrule
-		games & 1.0 & 1400 & 3.1 & 6.8 & -8.4 & 2.5 & 18.0 \\ 
-		overallwins & 1.0 & 1403 & -3.5 & 11.3 & -28.4 & -2.6 & 15.7 \\ 
-		overalllosses & 1.0 & 1402 & -3.5 & 8.4 & -21.6 & -2.7 & 10.9 \\ 
-		winlosspct & 1.0 & 2000 & -0.4 & 0.7 & -1.7 & -0.4 & 1.0 \\ 
-		srs & 1.0 & 2000 & 0.8 & 0.5 & -0.1 & 0.8 & 1.8 \\ 
-		sos & 1.0 & 2000 & 0.2 & 0.4 & -0.5 & 0.2 & 0.9 \\ 
-		wins\_conf & 1.0 & 2000 & -0.2 & 0.1 & -0.4 & -0.2 & -0.1 \\ 
-		losses\_conf & 1.0 & 2000 & -0.3 & 0.1 & -0.5 & -0.3 & -0.1 \\ 
-		pts & 1.0 & 2000 & -0.4 & 0.5 & -1.3 & -0.4 & 0.5 \\ 
-		opp\_pts & 1.0 & 2000 & 0.5 & 0.4 & -0.2 & 0.5 & 1.2 \\ 
-		fta\_per\_fga\_pct & 1.0 & 2000 & 1.0 & 0.7 & -0.4 & 1.0 & 2.3 \\ 
-		fg3a\_per\_fga\_pct & 1.0 & 2000 & -0.1 & 0.1 & -0.2 & -0.1 & 0.0 \\ 
-		ts\_pct & 1.0 & 2000 & 2.3 & 1.5 & -0.7 & 2.3 & 5.2 \\ 
-		trb\_pct & 1.0 & 2000 & -0.1 & 0.1 & -0.2 & -0.1 & 0.0 \\ 
-		ast\_pct & 1.0 & 2000 & -0.0 & 0.1 & -0.1 & -0.0 & 0.1 \\ 
-		blk\_pct & 1.0 & 2000 & -0.1 & 0.0 & -0.2 & -0.1 & -0.1 \\ 
-		efg\_pct & 1.0 & 2000 & -2.2 & 1.4 & -4.9 & -2.2 & 0.5 \\ 
-		tov\_pct & 1.0 & 2000 & 0.2 & 0.1 & 0.1 & 0.2 & 0.3 \\ 
-		ft\_rate0 & 1.0 & 2000 & -1.5 & 1.0 & -3.3 & -1.5 & 0.4 \\ 
-%		0$|$1 & 1.0 & 2000 & -0.2 & 0.1 & -0.3 & -0.2 & -0.0 \\ 
-%		1$|$2 & 1.0 & 2000 & 1.5 & 0.1 & 1.4 & 1.5 & 1.7 \\ 
-%		2$|$3 & 1.0 & 2000 & 2.8 & 0.1 & 2.6 & 2.8 & 3.0 \\ 
-%		3$|$4 & 1.0 & 2000 & 3.9 & 0.1 & 3.6 & 3.9 & 4.2 \\ 
-%		4$|$5 & 1.0 & 2000 & 4.8 & 0.2 & 4.4 & 4.8 & 5.2 \\ 
-%		5$|$6 & 1.0 & 2000 & 5.7 & 0.2 & 5.3 & 5.7 & 6.2 \\ 
-%		mean\_PPD:0 & 1.0 & 2000 & 0.5 & 0.0 & 0.4 & 0.5 & 0.5 \\ 
-%		mean\_PPD:1 & 1.0 & 2000 & 0.3 & 0.0 & 0.2 & 0.3 & 0.3 \\ 
-%		mean\_PPD:2 & 1.0 & 2000 & 0.1 & 0.0 & 0.1 & 0.1 & 0.2 \\ 
-%		mean\_PPD:3 & 1.0 & 2000 & 0.1 & 0.0 & 0.0 & 0.1 & 0.1 \\ 
-%		mean\_PPD:4 & 1.0 & 2000 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 \\ 
-%		mean\_PPD:5 & 1.0 & 2000 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 \\ 
-%		mean\_PPD:6 & 1.0 & 2000 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 \\ 
-%		log-posterior & 1.0 & 438 & -1770.7 & 4.7 & -1780.6 & -1770.3 & -1762.4 \\ 
-		\bottomrule
-	\end{tabular}
-\end{table}
+	\input{"../fig/polr_orig_coef.txt"}
+%	\caption{}
+\end{figure}
 
-\missingfigure{Don't forget that when intrepreting the log-odds that R reverses the sign compared to other programs. Look here for the math: \url{https://stats.stackexchange.com/questions/89474/interpretation-of-ordinal-logistic-regression}}
 
-We need to note that the coefficients do not have the most meaningful interpretations, but since they are all standardized, we can use their absolute magnitude and whether their credible intervals contain zero to discern their relevance. If a given credible interval contains zero, we can say that it is reasonably likely that the $\exp(\beta_i) = 1$ which indicates that their is reason to believe that the odds ratio can be one. This is equivalent to saying that there is no significant change in the odds with the use of this coefficient. 
+
+
+We need to note that the coefficients are standardized. While the coefficients do not have interpretations that are as meaningful in the units of the problem,  we can use their absolute magnitude, and whether their credible intervals contain zero, to discern a variables relevance in improving the odds of moving from one round to the next. If a given credible interval contains zero, we can say that it is reasonably likely that the $\exp(\beta_i) = 1$ which indicates that there is reason to believe that the odds ratio is equal to one. This is equivalent to saying that there is no significant change in the odds with the use of this coefficient. 
 
 We first aim to explain why the variances of the \texttt{games}, \texttt{overallwins}, and \texttt{overalllosses} variables have such high variance relative to the other variables. To see this, we will plot the ggpairs plot of the posteriors to determine what is going on.
 
@@ -318,57 +281,14 @@ We first aim to explain why the variances of the \texttt{games}, \texttt{overall
 
 We also see that there are some pretty strong correlations between the effective field goal percentage, total shooting percentage, and other variables. We aim to reduce the multi-collinearity in the model by removing those terms that have significant correlation with one another, and then we refit the model. 
 
-
-The in-sample performance of the Bayesian regression method is given by the following 7x7 confusion matrix (the left column is the true values and the top row is the predicted values):
+\subsubsection{Model Checking the Refit Model}
 \begin{figure}[H]
 	\centering
-	% latex table generated in R 3.4.3 by xtable 1.8-2 package
-	% Sun Apr 08 14:53:18 2018
-		\begin{tabular}{r|cccccc}
-			\toprule
-			& 0 & 1 & 2 & 3 & 4 & 6 \\ 
-			\midrule
-			0 & 685 &  89 &   0 &   0 &   0 &   0 \\ 
-			1 & 215 & 178 &  15 &   0 &   1 &   0 \\ 
-			2 &  43 & 116 &  29 &   5 &   0 &   0 \\ 
-			3 &   1 &  46 &  35 &  16 &   0 &   0 \\ 
-			4 &   0 &   9 &  23 &  13 &   1 &   1 \\ 
-			5 &   0 &   3 &   5 &  11 &   1 &   5 \\ 
-			6 &   0 &   0 &   4 &  12 &   4 &   4 \\ 
-			\bottomrule
-		\end{tabular}
-\caption{We can see that the algorithm is good at separating out the first round losers given that it only incorrectly classifies 89 of the teams that lost in the first round as going onto the second round. As we get into the middle rounds, however, we can see that it is much harder to classify correctly, and the regression downward biases the results - we can see that of those that make it to the fourth round, it has terrible performance at predicting that is the case. Similarity, it does not predict that anyone would make the fifth round which is troublesome considering that by the design of the tournament $4/64$ of the teams make it to the final four. This shows us that the data is just very difficult to work with, and that it is very noisy even in sample. March is, indeed, Mad.}
-\end{figure}
-
-
-We begin by looking for those coefficients that do not contain zero in their confidence interval
-\missingfigure{This needs to be updated now that the algo has been rerun}
-\begin{description}
-	\item[wins\_conf] We can see that the wins number inter-conference has a negative coefficient but the magnitude of the coefficient does not indicate that it is practically significant as the odds of changing levels in the tournament are only affected by about  22\% ($\exp(-0.1) \approx 1.22$) (positivity). Since the odds are increasing, this indicates that teams that tend to play and win more conference games tend to do better in the tournament. This result makes sense. 
-	\item[loses\_conf] The mean of this term is, like the wins\_conf pretty insignificant from a practical standpoint as it only increases the odds by about 34\% ($\exp(.34) = 1.33$). The sign of this coefficient seems to be counter intuitive as we would expect the wins to have a positive effect on the odds and the losses to have a negative effect on the odds. I think that the fact that the increase in odds for these variables indicate that those teams that tend to play a larger number of games than their opponents during the season tend to do better in the tournament. This could makes sense as schools that are smaller tend to do worse in the tournament.  
-	\item[blk\_pct] Accounting for the blocking percentage, this tells us that for every standard deviation that a team blocks above the average, the odds of them winning increase by about 10\% which is in line with our intuition. Given how devastating certain blocks can be to the psyche of the other team, and how critical often a few points are in the tournament, the ability to block is a feature that we expected to be critical to the performance of a team.
-\end{description}
-
-
-
-
-
-
-
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1\linewidth]{../fig/polr_autocorr}
+	\includegraphics[width=.6\linewidth]{../fig/polr_autocorr}
 	\caption{The autocorrelation on all of the parameters looked similar to the auto-correlation above - we can see that the posterior was explored throughly and the chains did not get stuck for long in any one particular area. }
 	\label{fig:polr_autocorrelation}
 \end{figure}
 
-%\begin{figure}
-%	\centering
-%	\includegraphics[width=1\linewidth]{../fig/polr_pp}
-%	\caption{The upper left histogram is the true distribution of the factor levels of $y$. We can see that their are seven levels - each one half the size of the preceding bar since a team either makes it or does not make it to the next round. We can see that the posterior predictive distributions more or less seem to capture this well, but we can see that for levels greater than four (i.e. for teams that made it to the final four) the ordinal regression model fails to predict well in these tails. As a result, this may be something that we need to correct for when looking at the final four contenders.}
-%	\label{fig:polr_pp}
-%\end{figure}
 
 \begin{figure}[H]
 	\centering
@@ -378,43 +298,96 @@ We begin by looking for those coefficients that do not contain zero in their con
 \end{figure}
 
 
+\subsubsection{The Refit Model}
+
+After removing the correlated variables, we refit the model and get the following coefficients.
+
+\begin{figure}[H]
+	\centering
+	\input{"../fig/polr_updated_coef.txt"}
+	%	\caption{}
+\end{figure}
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\linewidth]{../fig/polr_coef}
-	\caption{replace this with the ggplot version saved down}
+	\caption{The standard errors, after removing the collinear variables is far more manageable and we can see that the ``bouncing beta's'' problem in the original model has been more-or-less remedied}
 	\label{fig:polr_coef}
 \end{figure}
 
+%\missingfigure{After playing with coefficients, remember that for positive coefficients, increasing the value moves us closer to six and for negative coefficients, we move closer to zero with increasing the value}
+
+\subsubsection{Interpretation of the Coefficients}
+
+We begin by looking for those coefficients that do not contain zero in their confidence interval
+\begin{description}
+	\item[ts\_pct] Teams that tend tend to shoot better than other teams tend to have a higher probability of advancing in the tournament. We can see that by increasing our ts\_pct by one standard deviation, we believe that our odds will increase  (with 95\% probability)  between 1.13 times and 1.41 times on average. 
+	\item[sos] This is the strength-of-schedule variable. We can see that those teams with a larger strength-of-schedule tend to do far better in the tournament - this is intuitive and is in-line with what we would expect - teams that are in more difficult conferences and make it to the tournament tend to do very well in the field.  If we increase our strength-of-schedule measure by one standard deviation, we expect our odds of moving to the next level (with 95\% probability) to increase by 2.27 times to 2.94 times.
+	\item[games] Teams that tend to play more games throughout the season tend to move higher in the tournament. This is the ``big-team'' effect. Those teams that tend to play more games throughout the season tend to be larger schools with a larger focus on the sport of basketball. Increasing our games played by one standard deviation increases our likelihood (with 95\% probability) between 2.86 times and 3.74 times. 
+	\item[fg3a\_per\_fga\_pct] Teams that tend to take a disproportionate number of three pointers tend to do worse in the tournament. This may be selection bias, as those teams that tend to be down tend to take more threes on average. However, this was an interesting effect and one that we were not expecting to see. Increasing our amount of threes taken as a percentage of field goals by one standard deviation multiplies our likelihood (with 95\% probability) between 0.74 times and 0.93 times. 
+	\item[trb\_pct] Teams that tend to rebound more tend to do better in the tournament. Increasing our rebounding rate by one standard deviation multiplies our likelihood (with 95\% probability) between 1.01 times and 1.26 times. 
+\end{description}
+All of the other coefficients contain zero in their confidence interval which indicates to us that we do not have significant evidence that there is any effect in using these predictors will improve the odds of someone making it to the next level of the tournament. Overall, the coefficients that were highly non-zero tend to indicate that better teams do well in the tournament, which is not really a surprise, but the sign of the proportion of shots that were threes surprised us. 
+
+
+\subsubsection{In-Sample Performance}
+The in-sample performance of the ordinal regression method is given by the following 7x7 confusion matrix (the left column is the true values and the top row is the predicted values):
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/polr_tovpct}
-	\caption{The turn-over percentage(tov\_pct) has a positive coefficient which makes sense in the context of the problem. For every standard deviation that a team turns over the ball more than the field on average, we see about a 19\% change in the odds that they lose. This is significant and is in-line with intuition that turnovers can be the critical factor in a tight game in the tournament}
-	\label{fig:polrtovpct}
+	\input{"../fig/polr_predictions.txt"}
+\caption{On the left are the true classes and along the top are the predictions from the ordinal regression analysis using the \textit{argmax} of the posterior to discern what the choice of the Bayesian interpretation of the ordinal regression would predict. We can see that the model is decent at classifying the early rounds - of the teams that were eliminated in the first round, 636 were classified correctly, 135 were incorrectly classified as going to the first round, and 3 were projected to go to the second round. However, the model also appears downwards biased. We can see that of the teams that won the tournament, the model sometimes only said that they would make it one round, and we can see that the model was not able to identify those teams that made it to the finals easily - there were no teams for which we predicted five rounds of advancement. This class may be very hard to identify in general.}
 \end{figure}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1\linewidth]{../fig/polr_residuals}
-	\caption{captionhere}
-	\label{fig:residuals}
-\end{figure}
 
-\missingfigure{Still under construction :) - include the results of working with the names model}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/polr_name_pp}
-	\caption{If we include the names as variables, we can see that the posterior predictive distribution frequency count is almost spot on with what we observe. This makes sense that our predictions would get better accounting for the individual team variability in the model, but we need to find out if the prediction that comes from this model is something that outperforms the simpler model and is not bias downwards on the predictions of how many people are going to make the tournament, but it is not a drastically improved fit.}
-	\label{fig:polrnamepp}
-\end{figure}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/polr_team_log_odds}
-	\caption{We can see that the 95\% posterior interval for each of the teams is centered around, and contains zero. This is an indication that for no team in the tournament does their name, controlling for things like shooting percentage performance, account for over or under performance. This finding was highly surprising to us, as we expected certain powerhouse schools like Kentucky to outperform other schools systemically in the tournament but we can see that even the powerhouse teams rely on the fundamentals just as much as everyone else.}
-	\label{fig:polrteamlogodds}
-\end{figure}
+
+
+
+
+
+
+
+%\begin{figure}
+%	\centering
+%	\includegraphics[width=1\linewidth]{../fig/polr_pp}
+%	\caption{The upper left histogram is the true distribution of the factor levels of $y$. We can see that their are seven levels - each one half the size of the preceding bar since a team either makes it or does not make it to the next round. We can see that the posterior predictive distributions more or less seem to capture this well, but we can see that for levels greater than four (i.e. for teams that made it to the final four) the ordinal regression model fails to predict well in these tails. As a result, this may be something that we need to correct for when looking at the final four contenders.}
+%	\label{fig:polr_pp}
+%\end{figure}
+
+
+
+
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=0.7\linewidth]{../fig/polr_tovpct}
+%	\caption{The turn-over percentage(tov\_pct) has a positive coefficient which makes sense in the context of the problem. For every standard deviation that a team turns over the ball more than the field on average, we see about a 19\% change in the odds that they lose. This is significant and is in-line with intuition that turnovers can be the critical factor in a tight game in the tournament}
+%	\label{fig:polrtovpct}
+%\end{figure}
+
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=1\linewidth]{../fig/polr_residuals}
+%	\caption{captionhere}
+%	\label{fig:residuals}
+%\end{figure}
+
+%\missingfigure{Still under construction :) - include the results of working with the names model}
+
+% Need to include these!!!!!!!!!!!!!!!!!!
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=0.7\linewidth]{../fig/polr_name_pp}
+%	\caption{If we include the names as variables, we can see that the posterior predictive distribution frequency count is almost spot on with what we observe. This makes sense that our predictions would get better accounting for the individual team variability in the model, but we need to find out if the prediction that comes from this model is something that outperforms the simpler model and is not bias downwards on the predictions of how many people are going to make the tournament, but it is not a drastically improved fit.}
+%	\label{fig:polrnamepp}
+%\end{figure}
+%
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=0.7\linewidth]{../fig/polr_team_log_odds}
+%	\caption{We can see that the 95\% posterior interval for each of the teams is centered around, and contains zero. This is an indication that for no team in the tournament does their name, controlling for things like shooting percentage performance, account for over or under performance. This finding was highly surprising to us, as we expected certain powerhouse schools like Kentucky to outperform other schools systemically in the tournament but we can see that even the powerhouse teams rely on the fundamentals just as much as everyone else.}
+%	\label{fig:polrteamlogodds}
+%\end{figure}
 
 
 \section{Preliminary Discussion of Methods}

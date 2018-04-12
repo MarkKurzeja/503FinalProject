@@ -58,7 +58,7 @@ scaled_train_data <- train_dat %>%
 post0 <- stan_polr(schoolwins ~ ., data = scaled_train_data, 
                    prior = R2(0.05), prior_counts = dirichlet(1),
                    chains = 4, cores = 8, seed = 123, iter = 1000)
-save(post0, file = "polr_model_results.stan")
+# save(post0, file = "polr_model_results.stan")
 load(file = "./polr_model_results.stan")
 
 # Plot the joint of overall wins and games played
@@ -73,7 +73,7 @@ ggsave("../fig/polr_correlation.pdf", device = "pdf", height = 4, width = 6)
 #                                                                              #
 ################################################################################
 
-post0_updated <- stan_polr(schoolwins ~ (.)^2, data = scaled_train_data %>% select(-overallwins, -games, - efg_pct), 
+post0_updated <- stan_polr(schoolwins ~ (.)^2, data = scaled_train_data %>% select(-overallwins, -games, - efg_pct, -games, -overalllosses, -wins_conf, -losses_conf), 
                    prior = R2(0.05), prior_counts = dirichlet(1),
                    chains = 4, cores = 8, seed = 123, iter = 1000)
 save(post0_updated, file = "polr_model_results_updated.stan")
@@ -107,8 +107,9 @@ k <- posterior_predict(post0, scaled_train_data, draws = 2000)
 pred_result <- apply(k, 2, function(i) {
   sort(table(i), decreasing = T) %>% names() %>% .[1] %>% as.numeric()
 })
-table(scaled_train_data$schoolwins %>% as.numeric() %>% {.-1}, pred_result)  %>% xtable::xtable()
-
+sink("../fig/polr_predictions.txt")
+table(scaled_train_data$schoolwins %>% as.numeric() %>% {.-1}, pred_result)  %>% xtable::xtable() %>% print(floating = FALSE) 
+sink()
 
 # Get the estimates of the coefficients
 post0_points <- as.matrix(post0_updated) %>% 
@@ -182,14 +183,15 @@ scaled_train_data %<>% select(- schoolurls)
 
 library(rstanarm)
 options(mc.cores = 8)
-post1 <- stan_polr(schoolwins ~ ., data = scaled_train_data , 
+post1 <- stan_polr(schoolwins ~ ., data = scaled_train_data %>% select(-overallwins, -games, - efg_pct, -games, -overalllosses, -wins_conf, -losses_conf) , 
                    prior = R2(0.05), prior_counts = dirichlet(1),
                    chains = 4, cores = 8, seed = 123, iter = 1000, algorithm = "sampling")
 
-# save(post1, file = "polr_model_results_w_names.stan")
+save(post1, file = "polr_model_results_w_names.stan")
 load(file = "polr_model_results_w_names.stan")
 
 pp_check(post1, plotfun = "bars")
+ggsave("../fig/polr_names_pp.pdf", device = "pdf", height = 4, width = 6)
 
 # launch_shinystan(post1)
 posterior_interval(post1, prob = .95) %>% 
