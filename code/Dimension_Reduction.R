@@ -5,15 +5,17 @@ library(ggplot2)
 library(GGally)
 library(gridExtra)
 
+# Read in data, remove rows with missing turnover percentage
 dat = read_csv("503projectdata.csv", col_names = TRUE)
 dat = dat[-c(16, 476),]
 dat$schoolwins = as.factor(dat$schoolwins)
-data_mat = as.matrix(dat[,c(8:10, 21:25, 27:29, 31)])
 
-# Remove rows with missing turnover percentage
+# Perform PCA on cenered and scaled versions of chosen variables
+data_mat = as.matrix(dat[,c(8:10, 21:25, 27:29, 31)])
 pc = princomp(scale(data_mat))
 summary(pc)
 
+# Plot pairwise combinations of first three PCs
 pcs_1and2 = data.frame(cbind(pc$scores[,1:2], schoolwins = dat$schoolwins)) %>%
   ggplot(aes(x = Comp.1, y = Comp.2)) + 
   geom_point(aes(color = schoolwins)) +
@@ -34,6 +36,7 @@ pcs_2and3 = data.frame(cbind(pc$scores[,2:3], schoolwins = dat$schoolwins)) %>%
 
 grid.arrange(pcs_1and2, pcs_1and3, pcs_2and3, nrow = 2)
 
+# Create boxplots of all predictors by win category
 quant_vars = c("winlosspct", "srs", "sos", "fta_per_fga_pct", "fg3a_per_fga_pct",
                 "ts_pct", "trb_pct", "ast_pct", "blk_pct", "efg_pct", "tov_pct",
                 "ft_rate0")
@@ -50,6 +53,8 @@ boxplot_list = lapply(quant_vars, create_boxplot)
 do.call("grid.arrange", boxplot_list)
 ggpairs(data.frame(data_mat))
 
+
+# Create skree plot
 data.frame(n = 1:12, var = pc$sdev^2/sum(pc$sdev^2)) %>%
   ggplot(aes(x = n, y = var)) +
   geom_point() +
