@@ -65,7 +65,17 @@ load(file = "./polr_model_results.stan")
 post0 %>% as.matrix() %>% .[,1:3] %>% as.data.frame() %>% GGally::ggpairs()
 ggsave("../fig/polr_correlation.pdf", device = "pdf", height = 4, width = 6)
 
+# Output the coefficients
+post0_coef <- post0 %>% as.data.frame() %>% 
+  ldply(function(i) {
+    data.frame(Median = median(i), SE = sd(i), `2.5%` = quantile(i, probs = 0.025), `97.5%` = quantile(i, probs = 0.975), check.names = F)
+  }) %>%
+  rename(Variable = .id) %>% 
+  .[1:19,]
 
+sink("../fig/polr_orig_coef.txt")
+post0_coef  %>% xtable::xtable() %>% print(floating = FALSE) 
+sink()
 
 ################################################################################
 #                                                                              #
@@ -73,10 +83,26 @@ ggsave("../fig/polr_correlation.pdf", device = "pdf", height = 4, width = 6)
 #                                                                              #
 ################################################################################
 
-post0_updated <- stan_polr(schoolwins ~ (.)^2, data = scaled_train_data %>% select(-overallwins, -games, - efg_pct, -games, -overalllosses, -wins_conf, -losses_conf), 
+updated_train_dat <- scaled_train_data %>% 
+  select(-overallwins,  -overalllosses, -wins_conf, -losses_conf, -pts, -opp_pts, -efg_pct, -ft_rate0, -winlosspct, -srs)
+
+nvars = ncol(updated_train_dat) - 1
+
+
+post0_updated <- stan_polr(schoolwins ~ ., data = updated_train_dat, 
                    prior = R2(0.05), prior_counts = dirichlet(1),
-                   chains = 4, cores = 8, seed = 123, iter = 1000)
-save(post0_updated, file = "polr_model_results_updated.stan")
+                   chains = 4, cores = 8, seed = 123, iter = 1000, verbose = F)
+launch_shinystan(post0_updated, ppd = T)
+
+# Testing the direction of the coefficients
+# updated_train_dat %>%
+#   head(n = 1) %>% mutate(ast_pct = ast_pct + 10) %>%
+#   posterior_predict(post0_updated, ., draws = 2000) %>%
+#   table() %>% prop.table() %>% plot()
+
+
+
+# save(post0_updated, file = "polr_model_results_updated.stan")
 load(file = "./polr_model_results_updated.stan")
 
 
@@ -97,27 +123,39 @@ np <- bayesplot::nuts_params(post0_updated)
 bayesplot::mcmc_nuts_energy(np) 
 ggsave("../fig/polr_chain_convergence.pdf", device = "pdf", height = 4, width = 6)
 
-rstan::stan_ac(post0_updated, pars = c("overalllosses", "wins_conf", "pts", "ts_pct"), fill = "blue", color = "blue", nrow = 2, ncol = 2)
+rstan::stan_ac(post0_updated, pars = c("sos", "ts_pct"), fill = "blue", color = "blue", nrow = 2, ncol = 2)
 ggsave("../fig/polr_autocorr.pdf", device = "pdf", height = 4, width = 6)
+
+# Output the coefficients
+post0_updated_coef <- post0_updated %>% as.data.frame() %>% 
+  ldply(function(i) {
+    data.frame(Median = median(i), SE = sd(i), `2.5%` = quantile(i, probs = 0.025), `97.5%` = quantile(i, probs = 0.975), check.names = F)
+  }) %>%
+  rename(Variable = .id) %>% 
+  .[1:nvars,]
+
+sink("../fig/polr_updated_coef.txt")
+post0_updated_coef  %>% xtable::xtable() %>% print(floating = FALSE) 
+sink()
 
 
 
 # See how it predicts in_sample
-k <- posterior_predict(post0, scaled_train_data, draws = 2000)
+k <- posterior_predict(post0_updated, updated_train_dat, draws = 2000)
 pred_result <- apply(k, 2, function(i) {
   sort(table(i), decreasing = T) %>% names() %>% .[1] %>% as.numeric()
 })
 sink("../fig/polr_predictions.txt")
-table(scaled_train_data$schoolwins %>% as.numeric() %>% {.-1}, pred_result)  %>% xtable::xtable() %>% print(floating = FALSE) 
+table(updated_train_dat$schoolwins %>% as.numeric() %>% {.-1}, pred_result)  %>% xtable::xtable() %>% print(floating = FALSE) 
 sink()
 
 # Get the estimates of the coefficients
 post0_points <- as.matrix(post0_updated) %>% 
   as.data.frame() %>% 
-  {.[,1:17]} %>% 
+  {.[,1:nvars]} %>% 
   {apply(., 2, median)}
 # Plot the posterior intervals
-posterior_interval(post0_updated, prob = .95)[1:17,1:2] %>% 
+posterior_interval(post0_updated, prob = .95)[1:nvars,1:2] %>% 
   as.data.frame() %>% 
   mutate(param = rownames(.), median = post0_points) %>% 
   ggplot(.) + 
@@ -133,7 +171,7 @@ posterior_interval(post0_updated, prob = .95)[1:17,1:2] %>%
 ggsave("../fig/polr_coef.pdf", device = "pdf", height = 4, width = 6)
 
 
-
+beepr::beep()
 
 
 
