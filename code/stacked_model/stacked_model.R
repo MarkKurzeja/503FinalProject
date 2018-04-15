@@ -171,28 +171,28 @@ a_ply(decisionMatrix, 1, function(i) {
 #                                   Adaboost                                   #
 #                                                                              #
 ################################################################################
-decisionMatrix <- expand.grid(mfinal = c(20, 50, 100), 
-                              coeflearn = c("Breiman", "Freund"), 
-                              stringsAsFactors = F)
-
-a_ply(decisionMatrix, 1, function(i) {
-  
-  train_dat_in <- data_train %>% dplyr::select(-key)
-  name = sprintf("ABOST_mfinal_%i_coefl_%.3s", i$mfinal, i$coeflearn)
-  model <- boosting(schoolwins ~ ., data = train_dat_in, mfinal = i$mfinal,
-                    coeflearn = i$coeflearn)
-  valout <- predict(model, data_validation %>% dplyr::select(-key))
-  testout <- predict(model, data_test %>% dplyr::select(-key))
-
-  valout %<>% .$class %>% as.numeric %>% data.frame()
-  names(valout) <- name
-  testout %<>% .$class %>% as.numeric %>% data.frame()
-  names(testout) <- name
-
-  validation_out <<- cbind(validation_out, valout)
-  test_out <<- cbind(test_out, testout)
-
-}, .progress = progress_win("Adaboost Progress"))
+# decisionMatrix <- expand.grid(mfinal = c(20, 50, 100), 
+#                               coeflearn = c("Breiman", "Freund"), 
+#                               stringsAsFactors = F)
+# 
+# a_ply(decisionMatrix, 1, function(i) {
+#   
+#   train_dat_in <- data_train %>% dplyr::select(-key)
+#   name = sprintf("ABOST_mfinal_%i_coefl_%.3s", i$mfinal, i$coeflearn)
+#   model <- boosting(schoolwins ~ ., data = train_dat_in, mfinal = i$mfinal,
+#                     coeflearn = i$coeflearn)
+#   valout <- predict(model, data_validation %>% dplyr::select(-key))
+#   testout <- predict(model, data_test %>% dplyr::select(-key))
+# 
+#   valout %<>% .$class %>% as.numeric %>% data.frame()
+#   names(valout) <- name
+#   testout %<>% .$class %>% as.numeric %>% data.frame()
+#   names(testout) <- name
+# 
+#   validation_out <<- cbind(validation_out, valout)
+#   test_out <<- cbind(test_out, testout)
+# 
+# }, .progress = progress_win("Adaboost Progress"))
 
 ################################################################################
 #                                                                              #
