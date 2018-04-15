@@ -171,7 +171,7 @@
 \begin{center}
 	\large \color{harvard}   \textit{Professor Long Nguyen - Stats 503} \\ \spacedlowsmallcaps{April 16$^{th}$, 2018} 
 \end{center}
-
+\thispagestyle{empty}
 \newpage
 
 \hfill
@@ -181,8 +181,10 @@
 	Every year, millions of people fill out March Madness brackets in attempt to predict the outcome of the NCAA men's basketball tournament. A big part of the draw is that the tournament is notoriously difficult to predict, and predicting a perfect bracket is so improbable that Warren Buffet, a US investor, annually offers \$1MM a year for life to any of his employees who can predict the exact outcome of the tournament. Many algorithms for predicting the tournament attempt to predict results at the individual game level, based on how teams match up with one another. We will instead focus on predicting how many rounds a team will progress in the tournament based on its performance over the course of the preceding season, with the goal of building stable and consistent predictions of tournament outcomes.
 \end{abstract}
 \tableofcontents
+\thispagestyle{empty}
 \newpage
 
+ \pagenumbering{arabic} 
 \section{Background}
 \subsection{Problem Description}
 After all regularly scheduled NCAA basketball games are concluded in mid-March, 68 teams are selected to participate in the NCAA tournament. Every game is single elimination, meaning that as soon as a team loses it is eliminated from the tournament. Eight of the 68 teams originally chosen have to compete in so-called play-in games, after which 64 teams remain. We will follow the same framework as that followed by most bracket prediction contests and concern ourselves here with predicting how teams will perform once the field has been narrowed down to 64 contenders. At this point there are $2^{32} \cdot 2^{16} \cdot 2^8 \cdot 2^4 \cdot 2^2 \cdot 2 = 2^{63}$ possible outcomes, which gives one an idea of the scope of this challenge. Predicting a perfect bracket may be impossible, but we will see how close we can get.
@@ -560,12 +562,14 @@ When looking at our problem, we ran into an issue with the domain of the respons
 %We also see that there are some pretty strong correlations between the effective field goal percentage, total shooting percentage, and other variables. We aim to reduce the multi-collinearity in the model by removing those terms that have significant correlation with one another, and then we refit the model. 
 
 \subsubsection{Running the Model and Model Checking}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=.6\linewidth]{../fig/polr_autocorr}
-	\caption{The autocorrelation on all of the parameters looked similar to the auto-correlation above. We can see that the posterior was explored throughly and the chains did not get stuck for long in any one particular area. }
-	\label{fig:polr_autocorrelation}
-\end{figure}
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=.6\linewidth]{../fig/polr_autocorr}
+%	\caption{The autocorrelation on all of the parameters looked similar to the auto-correlation above. We can see that the posterior was explored throughly and the chains did not get stuck for long in any one particular area. }
+%	\label{fig:polr_autocorrelation}
+%\end{figure}
+
+The autocorrelation plots, posterior summary statistics, R-hat metric, and Hamiltonian Energy was checked to ensure that the posterior did indeed converge. There were no divergent chains and no chain hit the treedepth for the Stan algorithm. As a result, we are able to proceed with the analysis.
 
 
 \begin{figure}[H]
@@ -793,7 +797,7 @@ Then the algorithm proceeds as follows
 \begin{figure}[H]
 	\centering
 	\input{../fig/StackedConfMatrix.txt}
-	\caption{The stacked model managed to get the winner of the tournament as well as $\nicefrac{25}{32}$ of the first round losses. The prediction is accurate 63\% of the time (going down the diagonal) and 91\% accurate if you consider the $\pm 1$ prediction band as accurate}
+	\caption{The stacked model managed to get the winner of the tournament as well as $\nicefrac{25}{32}$ of the first round losses. The prediction is accurate 63\% of the time (going down the diagonal) and 91\% accurate if you consider the $\pm 1$ prediction band}
 \end{figure}
 
 
@@ -803,6 +807,12 @@ We can see that each of the sub models was only off by one in either direction. 
 
 \section{Conclusion and Further Research}
 
+Having explored a variety of methods, we have founds a number of insights that we feel are important to state here:
+\begin{description}
+	\item[Stacking is Powerful] Taking a collection of smaller and weakly correlated models and training models that combines them is a powerful idea. The simplicity of stacking (conceptually) and the ease of implementation is something that we will keep in mind. This is a popular technique on Kaggle and it produced amazing results on our test data.
+	\item[Three Point Attempts Are Desperate] If we revisit the ordinal regression, we find that those teams that attempt more three pointers as a percentage of their field goals typically did worse in the tournament. This came as a surprise but makes sense given the nature of those teams that typically attempt a lot of three pointers - they are typically down in the tournament.  
+	\item[Other] \missingfigure{Eli and Andrei!!!}
+\end{description}
 
 
 
