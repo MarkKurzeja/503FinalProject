@@ -781,14 +781,7 @@ Then the algorithm proceeds as follows
 
 
 
-\subsection{Model Results}
-
-
-\begin{figure}[H]
-	\centering
-	\input{../fig/StackedConfMatrix.txt}
-	\caption{The stacked model managed to get the winner of the tournament as well as $\nicefrac{25}{32}$ of the first round losses. The prediction is accurate 63\% of the time (going down the diagonal) and 91\% accurate if you consider the $\pm 1$ prediction band as accurate}
-\end{figure}
+\subsection{Stacked Model Results}
 
 \begin{figure}[H]
 	\centering
@@ -797,9 +790,16 @@ Then the algorithm proceeds as follows
 	\label{fig:stackedmodelaccuracy}
 \end{figure}
 
+\begin{figure}[H]
+	\centering
+	\input{../fig/StackedConfMatrix.txt}
+	\caption{The stacked model managed to get the winner of the tournament as well as $\nicefrac{25}{32}$ of the first round losses. The prediction is accurate 63\% of the time (going down the diagonal) and 91\% accurate if you consider the $\pm 1$ prediction band as accurate}
+\end{figure}
+
+
 The stacked model does an amazing job at capitalizing on the structure of the submodels and improving their out-of-sample prediction accuracy. This performance is greater than what we expected, but we should not be too surprised after we consider the $\pm1$ accuracy of each of the sub models. 
 
-We can see that each of the sub models was only off by one in either direction. By training a model that can correct their individual bias, we should expect that an ensemble model would be able to outperform any of the candidate models. 
+We can see that each of the sub models was only off by one in either direction. By training a model that can correct their individual bias, we should expect that an ensemble model would be able to outperform any of the candidate models that the stacked model was trained on. 
 
 \section{Conclusion and Further Research}
 
