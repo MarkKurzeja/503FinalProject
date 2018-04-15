@@ -57,6 +57,7 @@ weak(clust_kmeans$cluster,4)
 silk = silhouette(clust_kmeans$cluster, dis)
 fviz_silhouette(silk)
 
+#alternative distances to consider
 dis2 = dist(scaledat, method = 'manhattan') #manhattan
 dis3 = daisy(scaledat, metric = 'gower')
 
@@ -102,4 +103,8 @@ weak(sil_comp[,1],2)
 sil_ward = silhouette(cutree(ward[[deparse(substitute(dis))]], k=4), dis)
 mdsplot(sil_ward[,1])
 weak(sil_ward[,1],3)
+
+fviz_silhouette(sil_comp)
+fviz_silhouette(sil_ward)
+
 
