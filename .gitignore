@@ -4,6 +4,7 @@
 *.log
 *.synctex.gz
 *.toc
+*.DS_Store
 doc/503_NCAA_Final_Project.pdf
 code/.Rhistory
 *.synctex(busy)
