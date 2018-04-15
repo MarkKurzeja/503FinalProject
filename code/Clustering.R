@@ -6,6 +6,7 @@ library(ggdendro)
 library(factoextra)
 library(mclust)
 library(dplyr)
+library(xtable)
 
 # Read in data, remove rows with missing turnover percentage
 dat = read_csv("503projectdata.csv", col_names = TRUE)
@@ -95,16 +96,52 @@ get_sil = function(distance, k){
 
 get_sil(dis,4)
 
-sil_comp = silhouette(cutree(comp[[deparse(substitute(dis))]], k=4), dis)
+sil_comp = silhouette(cutree(comp$dis, k=4), dis)
 
 mdsplot(sil_comp[,1])
 weak(sil_comp[,1],2)
 
-sil_ward = silhouette(cutree(ward[[deparse(substitute(dis))]], k=4), dis)
+sil_ward = silhouette(cutree(ward$dis, k=4), dis)
 mdsplot(sil_ward[,1])
 weak(sil_ward[,1],3)
 
 fviz_silhouette(sil_comp)
 fviz_silhouette(sil_ward)
 
+mds = as.data.frame(cmdscale(dis2, k=2)) #Manhattan
 
+get_sil(dis2,4)
+sil_comp = silhouette(cutree(comp$dis2, k=4), dis2)
+mdsplot(sil_comp[,1])
+weak(sil_comp[,1],1)
+
+sil_ward = silhouette(cutree(ward$dis2, k=4), dis2)
+mdsplot(sil_ward[,1])
+weak(sil_ward[,1],3)
+
+fviz_silhouette(sil_comp) 
+fviz_silhouette(sil_ward)
+
+mds = as.data.frame(cmdscale(dis3, k=2)) #Gower
+
+get_sil(dis3,4)
+sil_comp = silhouette(cutree(comp$dis3, k=4), dis3)
+mdsplot(sil_comp[,1])
+weak(sil_comp[,1],4)
+
+sil_ward = silhouette(cutree(ward$dis3, k=4), dis3)
+mdsplot(sil_ward[,1])
+weak(sil_ward[,1],4)
+
+fviz_silhouette(sil_comp) 
+fviz_silhouette(sil_ward)
+
+#mixture model
+dat.clust$parameters$pro
+xtable(dat.clust$parameters$mean)
+fitted = predict.Mclust(dat.clust, scaledat)
+mdsplot(fitted$classification)
+#weak(fitted$classification,2)
+weak(fitted$classification,3)
+mmsil = silhouette(fitted$classification, dis)
+fviz_silhouette(mmsil)

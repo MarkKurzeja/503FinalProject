@@ -21,6 +21,9 @@
 \usepackage{amssymb}
 \usepackage{nicefrac} % For typsetting inline fractions
 \usepackage{mathtools} % For substack and mathclap (underbrace helper commands)
+\usepackage{algpseudocode}
+\usepackage{tcolorbox}
+%\usepackage[]{algorithm2e}
 
 %% Typography enhancements
 \usepackage{microtype} % For awesome typographical improvements
@@ -213,13 +216,31 @@ We began by performing data exploration and visualization, as well as dimension 
 
 Summaries of the predictors are provided below.
 
-\missingfigure{Can we use x-table or similar so that this is not a screenshot? Or just change the background to white?}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/Summary}
-	\caption{caption goes here}
-	\label{fig:summary}
-\end{figure} 
+
+
+\begin{table}[!htbp] \centering 
+	\caption{} 
+	\label{} 
+	\begin{tabular}{@{\extracolsep{5pt}}lccccc} 
+		\\[-1.8ex]\hline 
+		\hline \\[-1.8ex] 
+		Statistic & \multicolumn{1}{c}{N} & \multicolumn{1}{c}{Mean} & \multicolumn{1}{c}{St. Dev.} & \multicolumn{1}{c}{Min} & \multicolumn{1}{c}{Max} \\ 
+		\hline \\[-1.8ex] 
+		winlosspct & 1,636 & 0.717 & 0.095 & 0.367 & 0.974 \\ 
+		srs & 1,636 & 11.298 & 8.160 & $-$17.130 & 34.800 \\ 
+		sos & 1,636 & 3.989 & 5.677 & $-$14.180 & 13.010 \\ 
+		fta\_per\_fga\_pct & 1,636 & 0.388 & 0.050 & 0.225 & 0.654 \\ 
+		fg3a\_per\_fga\_pct & 1,636 & 0.317 & 0.058 & 0.141 & 0.532 \\ 
+		ts\_pct & 1,636 & 0.550 & 0.025 & 0.451 & 0.620 \\ 
+		trb\_pct & 1,636 & 51.808 & 2.384 & 42.400 & 61.100 \\ 
+		ast\_pct & 1,636 & 56.332 & 5.291 & 40.300 & 74.000 \\ 
+		blk\_pct & 1,636 & 8.961 & 2.986 & $-$2.200 & 20.400 \\ 
+		efg\_pct & 1,636 & 0.516 & 0.026 & 0.412 & 0.598 \\ 
+		tov\_pct & 1,636 & 16.697 & 1.954 & 2.300 & 23.200 \\ 
+		ft\_rate0 & 1,636 & 0.271 & 0.037 & 0.160 & 0.430 \\ 
+		\hline \\[-1.8ex] 
+	\end{tabular} 
+\end{table} 
 
 At a high level, the first three predictors provide a good sanity check in that they suggest that  teams in the tournament are generally better than average teams. The first quartile for winning percentage (percentage of games that a given team won) is well above 50\% for the teams in our data set. Our teams also generally have strength of schedule and simple rating system scores well above zero, which is to be expected given that those metrics are designed such that an average team will have a score around zero. It may seem a bit strange at first that stronger teams will tend to have a better SOS score, but this can be explained by the fact that strong teams tend to be in the same conferences as other strong teams, and therefore play other strong teams more frequently.
 
@@ -317,7 +338,7 @@ The clustering here appears somewhat ambiguous, with an average silhouette width
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\linewidth]{../fig/areyouheigh}
-		\caption{2D MDS plots of clusters: single linkage, complete linkage, and Ward's method}
+		\caption{2D MDS plots of clusters: single linkage, complete linkage, and Ward's method, Euclidean distance}
 \end{figure}
 
 We next explore what hierarchical clustering can tell us about the data. When hierarchical clustering is performed using Euclidean distances and either complete linkage or Ward's method, we see a result fairly similar to that obtained from k-means.  Single linkage, however, maps everything except for two isolated observations into a single cluster. It appears that the heavy degree of noise in our dataset prevents a more meaningful clustering under the latter dissimilarity measure.
@@ -363,9 +384,159 @@ As noted above, the complete linkage and Ward's method clusters are very similar
 
 The silhouettes for these methods show much more ambiguity than in k-means: complete linkages have an average width of 0.07, and Ward's method gives an average width of .08, both with striking potential for misclustering in clusters 1 and 4.  On the whole, these appear to be less suitable than the clusters obtained from K-means.
 
+Extending this analysis via alternative distance measures produces consistent results.  Note that as our 2D MDS plot is now using Manhattan distances as well, its appearance is slightly changed.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{"../fig/manheightan"}
+	\caption{2D MDS plots of clusters: single linkage, complete linkage, and Ward's method, Manhattan distance}
+\end{figure}
+
+Using Manhattan distances, like Euclidean, gives a largely uninformative single linkage clustering.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/comp2}
+	\caption{Wins by cluster and 2D MDS plot of clusters, complete linkage, Manhattan distance}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/compweak2}
+	\caption{Standardized mean difference from full data, complete linkage, Manhattan distance}
+\end{figure}
+
+The complete linkage gives a variation on our previous results, returning one large, relatively strong cluster with extensive wins and three weaker clusters.  The strong cluster shows a near mirror image of the weak clusters seen in previous methods: strong SOS and SRS, low turnover percentages, relatively good blocking, win, and total rebounding percentages.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/ward2}
+	\caption{Wins by cluster and 2D MDS plot of clusters, Ward's method, Manhattan distance}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/wardweak2}
+	\caption{Standardized mean difference from full data, Ward's method, Manhattan distance}
+\end{figure}
+
+Ward's method returns a more typical subgrouping of one cluster of weaker teams and three stronger.  The low-win cluster has very similar characteristics to previous low-win clusters.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{"../fig/compsil2"}
+	\caption{Silhouette plot, complete linkage, Manhattan distance}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{"../fig/wardsil2"}
+	\caption{Silhouette plot, Ward's method, Manhattan distance}
+\end{figure}
+
+Silhouette plots and widths for these two methods rank them as slightly stronger than the Euclidean distance clusters but still less efficient separations than k-Means.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{"../fig/gower"}
+	\caption{2D MDS plots of clusters: single linkage, complete linkage, and Ward's method, Gower distance}
+\end{figure}
+
+Using Gower distances also gives a largely uninformative single linkage clustering- one large cluster with isolated exception points.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/comp3}
+	\caption{Wins by cluster and 2D MDS plot of clusters, complete linkage, Gower distance}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/compweak3}
+	\caption{Standardized mean difference from full data, complete linkage, Gower distance}
+\end{figure}
+
+Again, the complete linkage is highly consistent with our previous results, giving one weak cluster.  In Gower distance, the extremity of the predictors relative to normal observations seems somewhat greater.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/ward3}
+	\caption{Wins by cluster and 2D MDS plot of clusters, Ward's method, Gower distance}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/wardweak3}
+	\caption{Standardized mean difference from full data, Ward's method, Gower distance}
+\end{figure}
+
+Ward's method is consistent.  The low-win cluster again has very similar characteristics to previous low-win clusters.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{"../fig/compsil3"}
+	\caption{Silhouette plot, complete linkage, Gower distance}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{"../fig/wardsil3"}
+	\caption{Silhouette plot, Ward's method, Gower distance}
+\end{figure}
+
+Silhouette plots and widths for these two methods rank the complete linkage as the weakest clustering to date.  Ward's method sees improvements over the previous distance metrics but not over k-Means.
+
 \subsubsection{Mixture Modeling}
 
-\missingfigure{Under Construction}
+Returning to our original mixture model, recall that BIC was maximized for a VVE model with four components.  The components will have proportions 28.5\%, 5.91\%, 33.67\%, and 31.86\%, and means described by the table of vectors below.
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{rrrrr}
+		\hline
+		& 1 & 2 & 3 & 4 \\ 
+		\hline
+		winlosspct & 0.38 & -0.61 & -0.07 & -0.16 \\ 
+		srs & 0.68 & -0.99 & -0.91 & 0.53 \\ 
+		sos & 0.56 & -0.90 & -1.02 & 0.74 \\ 
+		fta\_per\_fga\_pct & -0.09 & 0.56 & -0.01 & -0.01 \\ 
+		fg3a\_per\_fga\_pct & -0.04 & 0.41 & 0.09 & -0.13 \\ 
+		ts\_pct & 0.05 & 0.05 & -0.00 & -0.05 \\ 
+		trb\_pct & 0.24 & -0.59 & -0.15 & 0.05 \\ 
+		ast\_pct & -0.04 & 0.02 & -0.10 & 0.14 \\ 
+		blk\_pct & 0.48 & -0.18 & -0.34 & -0.04 \\ 
+		efg\_pct & 0.08 & -0.00 & 0.01 & -0.08 \\ 
+		tov\_pct & -0.22 & 0.36 & 0.21 & -0.09 \\ 
+		ft\_rate0 & -0.08 & 0.46 & -0.03 & 0.01 \\ 
+		\hline
+	\end{tabular}
+\end{table}
+
+The third component appears roughly consistent with the characteristics of weak clusters we observed under previous methods.  This notion is confirmed by plotting the clusters against wins and 2D MDS plots per earlier.  
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/sirmixalot}
+	\caption{Wins by cluster and 2D MDS plot of clusters, Mixture Model}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/mixweak}
+	\caption{Standardized mean difference from full data, Mixture Model}
+\end{figure}
+
+As we can see, the third components relationship with winning games, the MDS components, and the predictors all appear highly similar to the least-winning cluster or clusters observed in the previous methods.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{"../fig/mixsil"}
+	\caption{Silhouette plot, Mixture Model}
+\end{figure}
+
+The silhouette plot of our mixture model shows the lowest average silhouette width, tied with the Ward's method and Gower distance pair in a hierarchical clustering.
+
+In summary, across three different methods and variations within, we see a relatively consistent clustering showing teams with very low SRS and SOS, below-average Blocks, Rebounds, and Win rates, and above typical Turnover Percentage are associated with failing to pass the Sweet 16.  Of our methods, k-Means appeared to return the least ambiguous clusters.
 
 \subsection{Ordinal Regression}
 \subsubsection{Overview}
@@ -566,10 +737,67 @@ This section aims to detail the search for that model and the methods employed t
 
 
 \subsection{Discussion of Implementation}
+For the stacked model, we choose to use the following components as our sub models:
+\begin{description}
+	\item [Random Forests] varying the number of variables to sample for the trees and the maximum number of nodes
+	\item [Decision Trees] varying the number of variables to use for the decisions, the maximum depth of the tree, and the minimum splitting criterion
+	\item [Ordinal Regression] varying the link function between logistic, probit, and loglog
+	\item [Multinomial Regression] with no variations
+	\item [SVM] with linear, radial, and polynomial kernels, varying the cost and gamma parameters
+	\item [Adaboost + Bagging] varying the number of iterations, and the algorithm used to determine the coefficients learning algorithm
+\end{description}
+
+Then the algorithm proceeds as follows
+\begin{figure}[H]
+	\centering
+	\begin{tcolorbox}
+		\begin{algorithmic}
+			\State Split Data into \dattrain, \datval, and \dattest
+			\ForAll{$m \in Models$}
+			\State Train $m$ on \dattrain to get $m^{\star}$
+			\State \datvaltest $\leftarrow$ $Predict(m^{\star},\datval)$
+			\State \dattestpreds $\leftarrow$ $Predict(m^{\star},\dattest)$
+			\EndFor
+			%		
+			%		\State \Comment{Now \datvaltest and \dattestpreds have the original validation and testing data respectability as well as each models predictions}
+			\State BestModels $\leftarrow $ empty
+			\State nPredictors $\leftarrow$ 20
+			\For{1 $\rightarrow$ nPredictors}
+			\If{size(BestModels) == 0}
+			\State Find the most accurate model on \datval and \State put it in BestModels
+			\Else 
+				\State Find a model that predicts well  on \datval \State and is correlated small with models in BestModels.  \State Put it in BestModels.
+			\EndIf
+			\EndFor
+			\State Remove all model predictions in \datvaltest for models $\notin$ BestModels\\
+			\State Remove all model predictions in \dattestpreds for models $\notin$ BestModels\\
+			\State Train Stacked Model $\hat{SM}$ on \datvaltest\\
+			\State Final Predictions $\leftarrow Predict(\hat{SM}, \dattestpreds) $
+		\end{algorithmic}
+	\end{tcolorbox}
+\caption{Implementation of the Stacking Model Algorithm}
+\end{figure}
+
+
+
 
 \subsection{Model Results}
 
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/StackedModelAccuracy}
+	\caption{}
+	\label{fig:stackedmodelaccuracy}
+\end{figure}
+
+
+
+
 \section{Conclusion and Further Research}
+
+
+
+
 
 \newpage
 \begin{thebibliography}{9}

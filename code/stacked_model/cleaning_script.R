@@ -6,7 +6,7 @@
 rm(list = ls())
 
 # Set the working directory so that relative file paths work
-setwd("C:/Users/Mark/Dropbox/Graduate School/05) Courses/Stats 503/503FinalProject/code/stacked_model")
+setwd("C:/Users/Mark k/Dropbox/Graduate School/05) Courses/Stats 503/503FinalProject/code/stacked_model")
 
 # Read in the data
 data <- read.csv("./503projectdata_clean.csv", header = T, stringsAsFactors = F)
@@ -30,7 +30,7 @@ data_reduced[,-c(1,ncol(data_reduced))] %<>% scale()
 #     cbind(data_reduced %>% dplyr::select(key, schoolwins), .)
 
 # Get the testing data
-test_idx <- which(data_full$year == 2017)
+test_idx <- which(data_full$year == 2018)
 data_test <- data_reduced[test_idx, ]
 # data_test_pca <- data_reduced_pca[test_idx, ]
 save(data_test, file = "data_test.data")
