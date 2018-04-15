@@ -30,7 +30,7 @@ data_reduced[,-c(1,ncol(data_reduced))] %<>% scale()
 #     cbind(data_reduced %>% dplyr::select(key, schoolwins), .)
 
 # Get the testing data
-test_idx <- which(data_full$year == 2017)
+test_idx <- which(data_full$year == 2018)
 data_test <- data_reduced[test_idx, ]
 # data_test_pca <- data_reduced_pca[test_idx, ]
 save(data_test, file = "data_test.data")
