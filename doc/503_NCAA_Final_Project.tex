@@ -248,6 +248,41 @@ While we do not necessarily observe perfect clustering corresponding to each of 
 
 Although it only explains roughly 25\% of the variance in the data, the first principal component in particular seems to do a fairly good job of differentiating weak teams from strong ones, with teams that advanced further in the tournament tending to have lower scores for that component. The first principal component can roughly be interpreted as a negative average of winning percentage, SOS, SRS, effective field goal percentage, and true shooting percentage (although there are small contributions from a few other variables as well). In context, this result suggests that just looking at team's overall performance and ability to shoot gives a decent first order idea of whether or not it will perform well in the tournament.
 
+\subsection{Clustering}
+Piggybacking on the suggestive outcomes of our PCA analysis, we can see if our data can be clustered meaningfully.  If we can group our observations into 'kinds of team', those classes could in turn show a relationship with tournament wins.  Like PCA, this would potentially allow us to simplify our interpretation of the many, complicated predictors into one of simply 'teams with winning characteristics' and 'teams without winning characteristics'.  Unlike PCA, clustering allows us to organize our data into homogenous subgroups using our full data, rather than relying on a lower-dimensional projection.
+
+Plotting BIC as a function of the number of clusters k for a mixture model gives us an estimate of an optimal number of clusters.
+
+\begin{figure}[H]
+	\centering
+	\input{"../fig/sonofaBIC"}
+	%	\caption{}
+\end{figure}
+
+This turns out to be four, for a VVE model.
+
+\subsubsection{K-means}
+
+\begin{figure}[H]
+	\centering
+	\input{"../fig/clusterfun"}
+	%	\caption{}
+\end{figure}
+
+K-means clustering over four categories produces encouraging results not dissimilar from our preliminary PCA analysis.  While three of the clusters seem to have generally similar proportions of wins across the finals, teams in one cluster routinely fail to pass even the second round of the tournament.  These results are consistent across different random initialization conditions for the K-means algorithm- while three groups show similar win rates, one is a laggard.
+
+\begin{figure}[H]
+	\centering
+	\input{"../fig/weakclusterk"}
+	%	\caption{}
+\end{figure}
+
+Relative to the general data, the observations in this cluster have substantially lower values of SRS and SOS, with less extreme negative differences from the norm in Assists, Blocks, Effective Field Goals, Rebounds, True Shooting, and Win rates, along with a slightly higher than typical Turnover Percentage.  Teams with these characteristics, per our k-Means cluster, can be said to be of a kind and poorly set up to do well in the NCAA finals.
+
+\subsubsection{Hierarchical Clustering}
+
+Next we examine if we can see similar distinctions under hierarchical clustering.
+
 \subsection{Ordinal Regression}
 \subsubsection{Overview}
 When looking at our problem, we ran into an issue with the domain of the response variable - the number of rounds that a given team will make it in the tournament. In particular, our response variable is neither continuous (since it takes on only integer values and is bounded), nor is this a pure classification problem (because their is a natural ordering in the response). As a result, we need to run an ordinal regression, at least in the onset, and see how well the data can be summarized with these approaches before we can move onto more complicated models. We aim to identify interesting variables and gain further insight into the structure of our problem.  
