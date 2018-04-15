@@ -472,7 +472,55 @@ Silhouette plots and widths for these two methods rank the complete linkage as t
 
 \subsubsection{Mixture Modeling}
 
-\missingfigure{Under Construction}
+Returning to our original mixture model, recall that BIC was maximized for a VVE model with four components.  The components will have proportions 28.5\%, 5.91\%, 33.67\%, and 31.86\%, and means described by the table of vectors below.
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{rrrrr}
+		\hline
+		& 1 & 2 & 3 & 4 \\ 
+		\hline
+		winlosspct & 0.38 & -0.61 & -0.07 & -0.16 \\ 
+		srs & 0.68 & -0.99 & -0.91 & 0.53 \\ 
+		sos & 0.56 & -0.90 & -1.02 & 0.74 \\ 
+		fta\_per\_fga\_pct & -0.09 & 0.56 & -0.01 & -0.01 \\ 
+		fg3a\_per\_fga\_pct & -0.04 & 0.41 & 0.09 & -0.13 \\ 
+		ts\_pct & 0.05 & 0.05 & -0.00 & -0.05 \\ 
+		trb\_pct & 0.24 & -0.59 & -0.15 & 0.05 \\ 
+		ast\_pct & -0.04 & 0.02 & -0.10 & 0.14 \\ 
+		blk\_pct & 0.48 & -0.18 & -0.34 & -0.04 \\ 
+		efg\_pct & 0.08 & -0.00 & 0.01 & -0.08 \\ 
+		tov\_pct & -0.22 & 0.36 & 0.21 & -0.09 \\ 
+		ft\_rate0 & -0.08 & 0.46 & -0.03 & 0.01 \\ 
+		\hline
+	\end{tabular}
+\end{table}
+
+The third component appears roughly consistent with the characteristics of weak clusters we observed under previous methods.  This notion is confirmed by plotting the clusters against wins and 2D MDS plots per earlier.  
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/sirmixalot}
+	\caption{Wins by cluster and 2D MDS plot of clusters, Mixture Model}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/mixweak}
+	\caption{Standardized mean difference from full data, Mixture Model}
+\end{figure}
+
+As we can see, the third components relationship with winning games, the MDS components, and the predictors all appear highly similar to the least-winning cluster or clusters observed in the previous methods.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{"../fig/mixsil"}
+	\caption{Silhouette plot, Mixture Model}
+\end{figure}
+
+The silhouette plot of our mixture model shows the lowest average silhouette width, tied with the Ward's method and Gower distance pair in a hierarchical clustering.
+
+In summary, across three different methods and variations within, we see a relatively consistent clustering showing teams with very low SRS and SOS, below-average Blocks, Rebounds, and Win rates, and above typical Turnover Percentage are associated with failing to pass the Sweet 16.  Of our methods, k-Means appeared to return the least ambiguous clusters.
 
 \subsection{Ordinal Regression}
 \subsubsection{Overview}

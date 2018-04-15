@@ -123,14 +123,17 @@ fviz_silhouette(sil_ward)
 
 mds = as.data.frame(cmdscale(dis3, k=2)) #Gower
 
-get_sil(dis2,4)
-sil_comp = silhouette(cutree(comp$dis2, k=4), dis2)
+get_sil(dis3,4)
+sil_comp = silhouette(cutree(comp$dis3, k=4), dis3)
 mdsplot(sil_comp[,1])
-weak(sil_comp[,1],1)
+weak(sil_comp[,1],4)
 
-sil_ward = silhouette(cutree(ward$dis2, k=4), dis2)
+sil_ward = silhouette(cutree(ward$dis3, k=4), dis3)
 mdsplot(sil_ward[,1])
-weak(sil_ward[,1],3)
+weak(sil_ward[,1],4)
 
 fviz_silhouette(sil_comp) 
 fviz_silhouette(sil_ward)
+
+#mixture model
+
