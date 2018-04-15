@@ -216,13 +216,31 @@ We began by performing data exploration and visualization, as well as dimension 
 
 Summaries of the predictors are provided below.
 
-\missingfigure{Can we use x-table or similar so that this is not a screenshot? Or just change the background to white?}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/Summary}
-	\caption{caption goes here}
-	\label{fig:summary}
-\end{figure} 
+
+
+\begin{table}[!htbp] \centering 
+	\caption{} 
+	\label{} 
+	\begin{tabular}{@{\extracolsep{5pt}}lccccc} 
+		\\[-1.8ex]\hline 
+		\hline \\[-1.8ex] 
+		Statistic & \multicolumn{1}{c}{N} & \multicolumn{1}{c}{Mean} & \multicolumn{1}{c}{St. Dev.} & \multicolumn{1}{c}{Min} & \multicolumn{1}{c}{Max} \\ 
+		\hline \\[-1.8ex] 
+		winlosspct & 1,636 & 0.717 & 0.095 & 0.367 & 0.974 \\ 
+		srs & 1,636 & 11.298 & 8.160 & $-$17.130 & 34.800 \\ 
+		sos & 1,636 & 3.989 & 5.677 & $-$14.180 & 13.010 \\ 
+		fta\_per\_fga\_pct & 1,636 & 0.388 & 0.050 & 0.225 & 0.654 \\ 
+		fg3a\_per\_fga\_pct & 1,636 & 0.317 & 0.058 & 0.141 & 0.532 \\ 
+		ts\_pct & 1,636 & 0.550 & 0.025 & 0.451 & 0.620 \\ 
+		trb\_pct & 1,636 & 51.808 & 2.384 & 42.400 & 61.100 \\ 
+		ast\_pct & 1,636 & 56.332 & 5.291 & 40.300 & 74.000 \\ 
+		blk\_pct & 1,636 & 8.961 & 2.986 & $-$2.200 & 20.400 \\ 
+		efg\_pct & 1,636 & 0.516 & 0.026 & 0.412 & 0.598 \\ 
+		tov\_pct & 1,636 & 16.697 & 1.954 & 2.300 & 23.200 \\ 
+		ft\_rate0 & 1,636 & 0.271 & 0.037 & 0.160 & 0.430 \\ 
+		\hline \\[-1.8ex] 
+	\end{tabular} 
+\end{table} 
 
 At a high level, the first three predictors provide a good sanity check in that they suggest that  teams in the tournament are generally better than average teams. The first quartile for winning percentage (percentage of games that a given team won) is well above 50\% for the teams in our data set. Our teams also generally have strength of schedule and simple rating system scores well above zero, which is to be expected given that those metrics are designed such that an average team will have a score around zero. It may seem a bit strange at first that stronger teams will tend to have a better SOS score, but this can be explained by the fact that strong teams tend to be in the same conferences as other strong teams, and therefore play other strong teams more frequently.
 

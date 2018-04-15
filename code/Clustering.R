@@ -6,6 +6,7 @@ library(ggdendro)
 library(factoextra)
 library(mclust)
 library(dplyr)
+library(xtable)
 
 # Read in data, remove rows with missing turnover percentage
 dat = read_csv("503projectdata.csv", col_names = TRUE)
@@ -136,4 +137,11 @@ fviz_silhouette(sil_comp)
 fviz_silhouette(sil_ward)
 
 #mixture model
-
+dat.clust$parameters$pro
+xtable(dat.clust$parameters$mean)
+fitted = predict.Mclust(dat.clust, scaledat)
+mdsplot(fitted$classification)
+#weak(fitted$classification,2)
+weak(fitted$classification,3)
+mmsil = silhouette(fitted$classification, dis)
+fviz_silhouette(mmsil)
