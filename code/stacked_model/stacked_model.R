@@ -252,11 +252,14 @@ test_out <- test_out[,c(1:(firstColOfModels-1), selectedModels)]
 #                                                                              #
 ################################################################################
 
+ftn <- function(x) {as.numeric(as.character(x))}
+
 # Train a basic decision tree
 stacked_model <- ctree(schoolwins ~ . , data = validation_out %>% dplyr::select(-key))
 
-FinalAccuracy_stacked = mean(predict(stacked_model, test_out) == test_out$schoolwins)
-PMOneError_stacked = mean(abs(as.numeric(as.character(predict(stacked_model, test_out))) - as.numeric(as.character(test_out$schoolwins))) <= 1)
+
+FinalAccuracy_stacked = mean(ftn(predict(stacked_model, test_out)) == ftn(test_out$schoolwins))
+PMOneError_stacked = mean(abs(ftn(predict(stacked_model, test_out)) - ftn(test_out$schoolwins)) <= 1)
 
 cat(sprintf("Error Analysis:\n   Final Accuracy: %f\n   PMOneError : %f", FinalAccuracy_stacked * 100, 100 * PMOneError_stacked))
 
@@ -264,8 +267,8 @@ cat(sprintf("Error Analysis:\n   Final Accuracy: %f\n   PMOneError : %f", FinalA
 standAloneAccuracy = numeric(0)
 standAlonePMOneError = numeric(0)
 for(i in firstColOfModels:(firstColOfModels + npreds - 1)) {
-  standAloneAccuracy = append(standAloneAccuracy, mean(test_out[,i]== test_out$schoolwins))
-  standAlonePMOneError = append(standAlonePMOneError, mean(test_out[,i] - as.numeric(as.character(test_out$schoolwins)) <= 1))
+  standAloneAccuracy = append(standAloneAccuracy, mean(test_out[,i]== ftn(test_out$schoolwins)))
+  standAlonePMOneError = append(standAlonePMOneError, mean(abs(test_out[,i] - ftn(test_out$schoolwins)) <= 1))
 }
 
 # Append the Stacked model accuracy to the end of the vectors
@@ -296,3 +299,5 @@ ggsave("../../fig/StackedModelAccuracy.pdf", device = "pdf", width = 8, height =
 
 # Confusion Matrix
 table(test_out$schoolwins, predict(stacked_model, test_out))
+
+

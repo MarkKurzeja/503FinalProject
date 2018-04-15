@@ -6,7 +6,7 @@
 rm(list = ls())
 
 # Set the working directory so that relative file paths work
-setwd("C:/Users/Mark/Dropbox/Graduate School/05) Courses/Stats 503/503FinalProject/code/stacked_model")
+setwd("C:/Users/Mark k/Dropbox/Graduate School/05) Courses/Stats 503/503FinalProject/code/stacked_model")
 
 # Read in the data
 data <- read.csv("./503projectdata_clean.csv", header = T, stringsAsFactors = F)
