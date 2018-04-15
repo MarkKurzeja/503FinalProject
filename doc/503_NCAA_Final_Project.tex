@@ -329,7 +329,7 @@ Relative to the general data, the observations in this cluster have substantiall
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/kmeansil}
+	\includegraphics[width=0.5\linewidth]{../fig/kmeansil}
 		\caption{Silhouette plot, k-Means}
 \end{figure}
 
@@ -374,119 +374,19 @@ As noted above, the complete linkage and Ward's method clusters are very similar
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{"../fig/compsil"}
+	\includegraphics[width=0.5\linewidth]{"../fig/compsil"}
 		\caption{Silhouette plot, complete linkage, Euclidean distance}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{"../fig/wardsil"}
+	\includegraphics[width=0.5\linewidth]{"../fig/wardsil"}
 		\caption{Silhouette plot, Ward's method, Euclidean distance}
 \end{figure}
 
 The silhouettes for these methods show much more ambiguity than in k-means: complete linkages have an average width of 0.07, and Ward's method gives an average width of .08, both with striking potential for misclustering in clusters 1 and 4.  On the whole, these appear to be less suitable than the clusters obtained from K-means.
 
-Extending this analysis via alternative distance measures produces consistent results.  Note that as our 2D MDS plot is now using Manhattan distances as well, its appearance is slightly changed.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{"../fig/manheightan"}
-	\caption{2D MDS plots of clusters: single linkage, complete linkage, and Ward's method, Manhattan distance}
-\end{figure}
-
-Using Manhattan distances, like Euclidean, gives a largely uninformative single linkage clustering.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/comp2}
-	\caption{Wins by cluster and 2D MDS plot of clusters, complete linkage, Manhattan distance}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/compweak2}
-	\caption{Standardized mean difference from full data, complete linkage, Manhattan distance}
-\end{figure}
-
-The complete linkage gives a variation on our previous results, returning one large, relatively strong cluster with extensive wins and three weaker clusters.  The strong cluster shows a near mirror image of the weak clusters seen in previous methods: strong SOS and SRS, low turnover percentages, relatively good blocking, win, and total rebounding percentages.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/ward2}
-	\caption{Wins by cluster and 2D MDS plot of clusters, Ward's method, Manhattan distance}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/wardweak2}
-	\caption{Standardized mean difference from full data, Ward's method, Manhattan distance}
-\end{figure}
-
-Ward's method returns a more typical subgrouping of one cluster of weaker teams and three stronger.  The low-win cluster has very similar characteristics to previous low-win clusters.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{"../fig/compsil2"}
-	\caption{Silhouette plot, complete linkage, Manhattan distance}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{"../fig/wardsil2"}
-	\caption{Silhouette plot, Ward's method, Manhattan distance}
-\end{figure}
-
-Silhouette plots and widths for these two methods rank them as slightly stronger than the Euclidean distance clusters but still less efficient separations than k-Means.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{"../fig/gower"}
-	\caption{2D MDS plots of clusters: single linkage, complete linkage, and Ward's method, Gower distance}
-\end{figure}
-
-Using Gower distances also gives a largely uninformative single linkage clustering- one large cluster with isolated exception points.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/comp3}
-	\caption{Wins by cluster and 2D MDS plot of clusters, complete linkage, Gower distance}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/compweak3}
-	\caption{Standardized mean difference from full data, complete linkage, Gower distance}
-\end{figure}
-
-Again, the complete linkage is highly consistent with our previous results, giving one weak cluster.  In Gower distance, the extremity of the predictors relative to normal observations seems somewhat greater.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/ward3}
-	\caption{Wins by cluster and 2D MDS plot of clusters, Ward's method, Gower distance}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/wardweak3}
-	\caption{Standardized mean difference from full data, Ward's method, Gower distance}
-\end{figure}
-
-Ward's method is consistent.  The low-win cluster again has very similar characteristics to previous low-win clusters.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{"../fig/compsil3"}
-	\caption{Silhouette plot, complete linkage, Gower distance}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{"../fig/wardsil3"}
-	\caption{Silhouette plot, Ward's method, Gower distance}
-\end{figure}
-
-Silhouette plots and widths for these two methods rank the complete linkage as the weakest clustering to date.  Ward's method sees improvements over the previous distance metrics but not over k-Means.
+Extending this analysis via alternative distance measures produces highly consistent results.  Changing the distance metric to Manhattan or Gower distances produced no meaningful changes in the the clusters and saw lower average silhouette widths.  These results have been omitted for the sake of brevity and available on request.
 
 \subsubsection{Mixture Modeling}
 
@@ -532,7 +432,7 @@ As we can see, the third components relationship with winning games, the MDS com
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{"../fig/mixsil"}
+	\includegraphics[width=0.5\linewidth]{"../fig/mixsil"}
 	\caption{Silhouette plot, Mixture Model}
 \end{figure}
 
