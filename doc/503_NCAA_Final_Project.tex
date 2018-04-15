@@ -166,7 +166,7 @@
 \vfill
 
 \begin{center}
-	\large \color{harvard}   \textit{Professor Nguyen Long - Stats 503} \\ \spacedlowsmallcaps{April 16$^{th}$, 2018} 
+	\large \color{harvard}   \textit{Professor Long Nguyen - Stats 503} \\ \spacedlowsmallcaps{April 16$^{th}$, 2018} 
 \end{center}
 
 \newpage
@@ -194,7 +194,7 @@ The predictors can be thought of as belonging to six broad buckets corresponding
 
 \begin{itemize}
 	\item Winning percentage, strength of schedule (SOS) and simple rating system (SRS) are all holistic measures.
-	\item Free throw attempt rate (ft\_rate0), free throw attempts per field goal attempt (fta\_per\_fga\_pct), and three-point attempts per field goal attempt (fg3a\_per\_fga\_pct), and assist rate (ast\_pct) all help classify a team's offensive playing style. The idea is that three-point shots are high risk and high reward while free throws are low risk and low reward. Thus teams that attempt more three point shots may have more variable performances from game to game, while teams that attempt more free throws may be more consistent. Teams with higher assist rates should be expected to play more collaboratively, while teams with low assist rates rely more on strong individual performances.
+	\item Free throw attempt rate (ft\_rate0), free throw attempts per field goal attempt (fta\_per\_fga\_pct),  three-point attempts per field goal attempt (fg3a\_per\_fga\_pct), and assist rate (ast\_pct) all help classify a team's offensive playing style. The idea is that three-point shots are high risk and high reward while free throws are low risk and low reward. Thus teams that attempt more three point shots may have more variable performances from game to game, while teams that attempt more free throws may be more consistent. Teams with higher assist rates should be expected to play more collaboratively, while teams with low assist rates rely more on strong individual performances.
 	\item Total rebound percentage (trb\_pct) captures how well a team recovers the ball following shots missed by either themselves or their opponents.
 	\item True shooting percentage (ts\_pct) and effective field goal percentage (efg\_pct) both capture how well a team shoots the ball.
 	\item Turnover percentage (tov\_pct) captures how well a team is able to avoid allowing the other team to take the ball away (better teams should generally have lower turnover percentages).
@@ -225,10 +225,9 @@ At a high level, the first three predictors provide a good sanity check in that 
 
 It is also worth noting that a number of the predictors have unusually large and/or small outliers. To visualize high-level trends in the predictors, boxplots of each of the predictors for each of the six tournament win groups are provided below. Some of the predictors, such as assist percentage and the two free-throw related predictors, seem to be fairly similarly distributed across the six groups. However, there are a number of pronounced patterns. For instance, more successful tournament teams generally tend to much higher win-loss percentages, SRS, and SOS scores. This is also true, although to a lesser extent, for true shooting percentage, effective field goal percentage, total rebound percentage, and block percentage. Similarly, more successful teams tend to have lower turnover rates. 
 
-\missingfigure{Can we get a PDF of this?}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\linewidth]{../fig/RayleighWetDream}
+	\includegraphics[width=1\linewidth]{../fig/RayleighsWetDream.pdf}
 	\caption{caption goes here}
 	\label{fig:rayleighwetdream}
 \end{figure}
@@ -237,10 +236,9 @@ It is also worth noting that a number of the predictors have unusually large and
 
 A pairwise scatterplot of the predictors is provided below. Many of the correlations are relatively small. Unsurprisingly, in some cases where two predictors belong to the same bucket (per the framework above) we notice very strong correlations. Effective field goal percentage and true shooting percentage are the most strongly correlated predictors ($r \approx 0.96$), which is to be expected given that both measure how well a team shoots the ball. Free throw rate and free throw attempts per field goal attempt ($r \approx 0.922$) both capture how often a team tends to shoot free throws in slightly different ways. Finally, the strong correlations between SRS and wining percentage ($r \approx 0.518$) and SRS and SOS ($r \approx 0.867$) reflect the fact that SRS is meant to capture team performance, adjusted for strength of schedule.
 
-\missingfigure{Can we get a PDF of this?}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\linewidth]{../fig/MoneyMaker}
+	\includegraphics[width=1\linewidth]{../fig/MoneyMaker.pdf}
 	\caption{caption goes here}
 	\label{fig:ggpairs}
 \end{figure} 
@@ -272,13 +270,13 @@ From a numeric standpoint, there is no obvious cutoff here. We do see that that 
 
 While we do not necessarily observe perfect clustering corresponding to each of the possible win totals, it is encouraging to see that in general the principal components seem to separate better-performing teams (represented by the lighter colors above) from weaker teams (represented by the darker blue above). 
 
-Although it only explains roughly 25\% of the variance in the data, the first principal component, in particular, seems to do a fairly good job of differentiating weak teams from strong ones, with teams that advanced further in the tournament tending to have lower scores for that component. The first principal component can roughly be interpreted as a negative average of winning percentage, SOS, SRS, effective field goal percentage, and true shooting percentage (although there are small contributions from a few other variables as well). In context, this result suggests that just looking at team's overall performance and ability to shoot gives a decent first order idea of whether or not it will perform well in the tournament.
+Although it only explains roughly 25\% of the variance in the data, the first principal component in particular seems to do a fairly good job of differentiating weak teams from strong ones, with teams that advanced further in the tournament tending to have lower scores for that component. The first principal component can roughly be interpreted as a negative average of winning percentage, SOS, SRS, effective field goal percentage, and true shooting percentage (although there are small contributions from a few other variables as well). In context, this result suggests that just looking at team's overall performance and ability to shoot gives a decent first order idea of whether or not it will perform well in the tournament.
 
 \subsection{Clustering}
 \subsubsection{Overview}
-Piggybacking on the suggestive outcomes of our PCA analysis, we can see if our data can be clustered meaningfully.  If we can group our observations into 'kinds of team', those classes could in turn show a relationship with tournament wins.  Like PCA, this would potentially allow us to simplify our interpretation of the many, complicated predictors into one of simply 'teams with winning characteristics' and 'teams without winning characteristics'.  Unlike PCA, clustering allows us to organize our data into homogeneous subgroups using our full data, rather than relying on a lower-dimensional projection.
+As noted above, the first two principal components showed some evidence of underlying clustering in the data corresponding to tournament wins. We will explore this idea further here by applying selected clustering algorithms to see whether such a clustering structure can be detected. We begin by fitting a mixture model to our data.
 
-Plotting BIC as a function of the number of clusters $k$ for a mixture model gives us an estimate of an optimal number of clusters.
+Plotting BIC as a function of the number of clusters $k$ for a mixture model gives us an estimate for the optimal number of clusters to use.
 
 \begin{figure}[H]
 	\centering
@@ -296,7 +294,7 @@ This turns out to be four, for a VVE model.
 			\caption{Wins by cluster and 2D MDS plot of clusters, k-Means}
 \end{figure}
 
-K-means clustering over four categories produces encouraging results not dissimilar from our preliminary PCA analysis.  While three of the clusters seem to have generally similar proportions of wins across the finals, teams in one cluster routinely fail to pass even the second round of the tournament.  These results are consistent across different random initialization conditions for the K-means algorithm- while three groups show similar win rates, one is a laggard.
+K-means clustering over four categories produces encouraging results similar to those of the PCA performed above. While three of the clusters seem to have generally similar proportions of teams from each win category represented, once cluster consists mainly of teams that perform very poorly.  These results are consistent across different random initialization conditions for the K-means algorithm. While three groups show similar win rates, one is a laggard.
 
 \begin{figure}[H]
 	\centering
@@ -304,7 +302,7 @@ K-means clustering over four categories produces encouraging results not dissimi
 		\caption{Standardized mean difference from full data, k-Means}
 \end{figure}
 
-Relative to the general data, the observations in this cluster have substantially lower values of SRS and SOS, with less extreme negative differences from the norm in Assists, Blocks, Effective Field Goals, Rebounds, True Shooting, and Win rates, along with a slightly higher than typical Turnover Percentage.  Teams with these characteristics, per our k-Means cluster, can be said to be of a kind and poorly set up to do well in the NCAA finals.
+Relative to the general data, the observations in this cluster have substantially lower values of SRS and SOS, with less extreme negative differences from the norm in assist rate, block rate, effective field goal percentage, rebounding rate, true shooting percentage, and win rates, along with a slightly higher than usual turnover percentage. All of these deviations are consistent with what would be expected for weaker teams. Therefore teams belonging to this cluster can be expected to perform poorly in the tournament.  The silhouette plot below gives us another way to explore the results of k-means.
 
 \begin{figure}[H]
 	\centering
@@ -312,7 +310,7 @@ Relative to the general data, the observations in this cluster have substantiall
 		\caption{Silhouette plot, k-Means}
 \end{figure}
 
-With this said, clustering does appear somewhat close to ambiguous, with an average silhouette width of .13.  Some of the weakest clusterings occur in the fourth category, which is particularly concerning, as we believe that one to be of greatest interest in identifying weak teams.
+The clustering here appears somewhat ambiguous, with an average silhouette width of 0.13.  It is also a bit concerning that some of the weakest clusterings occur in the fourth category, which is the cluster identified above as potentially corresponding to weaker teams.
 
 \subsubsection{Hierarchical Clustering}
 
@@ -322,7 +320,7 @@ With this said, clustering does appear somewhat close to ambiguous, with an aver
 		\caption{2D MDS plots of clusters: single linkage, complete linkage, and Ward's method}
 \end{figure}
 
-Next we examine if we can see similar distinctions under hierarchical clustering.  Under Euclidean distances, this turns out to be the case for complete linkage and Ward's method.  Single linkage, however, maps everything except for two isolated observations into a single cluster.  It would appear that the heavy degree of noise in our dataset prevents a more meaningful clustering under the latter dissimilarity measure.
+We next explore what hierarchical clustering can tell us about the data. When hierarchical clustering is performed using Euclidean distances and either complete linkage or Ward's method, we see a result fairly similar to that obtained from k-means.  Single linkage, however, maps everything except for two isolated observations into a single cluster. It appears that the heavy degree of noise in our dataset prevents a more meaningful clustering under the latter dissimilarity measure.
 
 \begin{figure}[H]
 	\centering
@@ -349,7 +347,7 @@ Next we examine if we can see similar distinctions under hierarchical clustering
 \end{figure}
 
 
-The complete linkage and Ward's method clusters are very much similar to our k-Means cluster, though in the case of the former one cluster dominates most observations.  The differences in the predictors between the weak group and the general dataset are very similar to what we observed in the previous method, though somewhat more extreme in the case of complete linkage.
+As noted above, the complete linkage and Ward's method clusters are very similar to the k-means clusters we obtained, although in the case of Ward's method one cluster contains a majority of the data. Once again, one of the clusters contains mostly teams that would be expected to perform poorly from a conceptual standpoint. This pattern is particularly extreme when using complete linkage.
 
 \begin{figure}[H]
 	\centering
@@ -363,7 +361,7 @@ The complete linkage and Ward's method clusters are very much similar to our k-M
 		\caption{Silhouette plot, Ward's method, Euclidean distance}
 \end{figure}
 
-The silhouettes for these methods show much more ambiguity than in the k-Means case: complete linkages have an average width of .07 and Ward's method .08, both with striking potential for misclustering in clusters 1 and 4.  On the whole, these appear to be less suitable than K-means.
+The silhouettes for these methods show much more ambiguity than in k-means: complete linkages have an average width of 0.07, and Ward's method gives an average width of .08, both with striking potential for misclustering in clusters 1 and 4.  On the whole, these appear to be less suitable than the clusters obtained from K-means.
 
 \subsubsection{Mixture Modeling}
 
@@ -371,12 +369,12 @@ The silhouettes for these methods show much more ambiguity than in the k-Means c
 
 \subsection{Ordinal Regression}
 \subsubsection{Overview}
-When looking at our problem, we ran into an issue with the domain of the response variable - the number of rounds that a given team will make it in the tournament. In particular, our response variable is neither continuous (since it takes on only integer values and is bounded), nor is this a pure classification problem (because their is a natural ordering in the response). As a result, we need to run an ordinal regression, at least in the onset, and see how well the data can be summarized with these approaches before we can move onto more complicated models. We aim to identify interesting variables and gain further insight into the structure of our problem.  
+When looking at our problem, we ran into an issue with the domain of the response variable (how many games a team will win in the tournament). In particular, our response variable is neither continuous (since it takes on only integer values and is bounded), nor is this a pure classification problem (because their is a natural ordering in the response). As a result, we needed to run an ordinal regression, at least at the outset, to see how well the data can be summarized with this approach before we moved on to more complicated models.  
 
 \subsubsection{Fitting the First Model}
-For the ordinal regression problem, we chose to use the \texttt{rstanarm polr} functions, as this allows us to view the posterior distributions of the coefficients, and determine the uncertainty that we have around each of our estimates. We chose to do the Bayesian variant of ordinal regression as sports data is notoriously noisy and most predictors will have little relationship with our outcome of interest. We need to quantify errors more precisely as a result, and this method allows us to do so. We begin by standardizing the variables means and variance. Otherwise, the coefficients will not be on the same unit scale and we want to avoid this in our analysis. We begin by excluding the teams names themselves to see if the other predictor variables can be used to discern performance. 
+For the ordinal regression problem, we chose to use the \texttt{rstanarm polr} functions, as this allows us to view the posterior distributions of the coefficients, and determine the uncertainty that we have around each of our estimates. We chose to do the Bayesian variant of ordinal regression as sports data is notoriously noisy and most predictors will have little relationship with our outcome of interest. We needed to quantify errors more precisely as a result, and this method allowed us to do so. We began by standardizing the variables to avoid having the coefficients on different unit scales. We then excluded the teams names themselves to see if the other predictor variables can be used to discern performance. 
 
-After running the model, we run the checks on the posterior distribution, and see that each of the four chains used have, indeed, converged, there was no divergences in any of the four chains, and the tree-depth was not hit on any of the iterations signaling that the prior distribution on $R^2$ was sufficiently informative enough to ensure that the chains did not explore too distant from the true posterior distribution\footnote{For information on how the prior distribution of $R^2$ or on the operation of \texttt{rstanarm}, please refer to the guide here: {\color{blue} \url{https://cran.r-project.org/web/packages/rstanarm/rstanarm.pdf}}}. 
+After running the model, we ran the checks on the posterior distribution, and saw that each of the four chains used have converged, there were no divergences in any of the four chains, and the tree-depth was not hit on any of the iterations, signaling that the prior distribution on $R^2$ was sufficiently informative to ensure that the chains did not explore too far from the true posterior distribution\footnote{For information on how the prior distribution of $R^2$ or on the operation of \texttt{rstanarm}, please refer to the guide here: {\color{blue} \url{https://cran.r-project.org/web/packages/rstanarm/rstanarm.pdf}}}.
 
 The posterior distributions for the log-odds of the parameters are as follows:
 
@@ -386,19 +384,7 @@ The posterior distributions for the log-odds of the parameters are as follows:
 %	\caption{}
 \end{figure}
 
-
-
-
-We need to note that the coefficients are standardized. While the coefficients do not have interpretations that are as meaningful in the units of the problem,  we can use their absolute magnitude, and whether their credible intervals contain zero, to discern a variables relevance in improving the odds of moving from one round to the next. If a given credible interval contains zero, we can say that it is reasonably likely that the $\exp(\beta_i) = 1$ which indicates that there is reason to believe that the odds ratio is equal to one. This is equivalent to saying that there is no significant change in the odds with the use of this coefficient. 
-
-We first aim to explain why the variances of the \texttt{games}, \texttt{overallwins}, and \texttt{overalllosses} variables have such high variance relative to the other variables. To see this, we will plot the ggpairs plot of the posteriors to determine what is going on.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/polr_correlation}
-	\caption{We can see that games, overallwins, and overall losses are highly correlated with one another. As a result, we are getting a case of the "bouncing betas" that we encounter in simple linear regression - this is something that we should account for because the coefficients are basically fighting one another for significance in the model and we have a high amount of collinearity. When we look at the model, we see that games correlates highly with overall wins and overall wins correlates highly with overall losses.}
-	\label{fig:polrcorrelation}
-\end{figure}
+Note that the coefficients are standardized. While the coefficients do not have interpretations that are as meaningful in the units of the problem, we can use their absolute magnitude, and whether their credible intervals contain zero, to discern variables relevance in improving the odds of moving from one round to the next. If a given credible interval contains zero, we can say that it is reasonably likely that $\exp(\beta_i) = 1$ which indicates that there is reason to believe that the odds ratio is equal to one. This is equivalent to saying that there is no significant change in the odds with the use of this coefficient.
 
 We also see that there are some pretty strong correlations between the effective field goal percentage, total shooting percentage, and other variables. We aim to reduce the multi-collinearity in the model by removing those terms that have significant correlation with one another, and then we refit the model. 
 
@@ -406,7 +392,7 @@ We also see that there are some pretty strong correlations between the effective
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=.6\linewidth]{../fig/polr_autocorr}
-	\caption{The autocorrelation on all of the parameters looked similar to the auto-correlation above - we can see that the posterior was explored throughly and the chains did not get stuck for long in any one particular area. }
+	\caption{The autocorrelation on all of the parameters looked similar to the auto-correlation above. We can see that the posterior was explored throughly and the chains did not get stuck for long in any one particular area. }
 	\label{fig:polr_autocorrelation}
 \end{figure}
 
@@ -414,14 +400,14 @@ We also see that there are some pretty strong correlations between the effective
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\linewidth]{../fig/polr_nonames_pp}
-	\caption{This is a summary of the posterior predictive distribution for the first model that we have run with ordinal regression. We can see that the posterior is one of seven counts, we can see that if we run simulation from the predictive posterior, the counts that we get are right in line with what we observed. This indicates that the model is capturing the frequency of the counts in its inference which is important if we are not going to under bias or over bias any particular outcome. We can see that, especially at $wins = 0$, that the count is bias downwards, however, which makes sense given the imbalance of the representation of the zero count variables.}
+	\caption{This is a summary of the posterior predictive distribution for the first model that we ran with ordinal regression. We can see that the posterior is one of seven counts, and that if we run simulation from the predictive posterior, the resulting counds are in line with what we observed. This indicates that the model is capturing the frequency of the counts in its inference, which is important if we are not going to under bias or over bias any particular outcome. We can see especially at $wins = 0$ that the count is bias downwards, however, which makes sense given the imbalance of the representation of the zero count variables.}
 	\label{fig:polrnonamespp}
 \end{figure}
 
 
 \subsubsection{The Refit Model}
 
-After removing the correlated variables, we refit the model and get the following coefficients.
+After removing the correlated variables, we refit the model and obtained the following coefficients.
 
 \begin{figure}[H]
 	\centering
@@ -432,7 +418,7 @@ After removing the correlated variables, we refit the model and get the followin
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\linewidth]{../fig/polr_coef}
-	\caption{The standard errors, after removing the collinear variables is far more manageable and we can see that the ``bouncing beta's'' problem in the original model has been more-or-less remedied}
+	\caption{The standard errors, after removing the collinear variables is far more manageable.}
 	\label{fig:polr_coef}
 \end{figure}
 
@@ -440,26 +426,27 @@ After removing the correlated variables, we refit the model and get the followin
 
 \subsubsection{Interpretation of the Coefficients}
 
-We begin by looking for those coefficients that do not contain zero in their confidence interval
+We began by looking for those coefficients that do not contain zero in their confidence interval.
+
 \begin{description}
-	\item[ts\_pct] Teams that tend tend to shoot better than other teams tend to have a higher probability of advancing in the tournament. We can see that by increasing our ts\_pct by one standard deviation, we believe that our odds will increase  (with 95\% probability)  between 1.13 times and 1.41 times on average. 
-	\item[sos] This is the strength-of-schedule variable. We can see that those teams with a larger strength-of-schedule tend to do far better in the tournament - this is intuitive and is in-line with what we would expect - teams that are in more difficult conferences and make it to the tournament tend to do very well in the field.  If we increase our strength-of-schedule measure by one standard deviation, we expect our odds of moving to the next level (with 95\% probability) to increase by 2.27 times to 2.94 times.
+	\item[ts\_pct] Teams that tend to shoot better than other teams tend to have a higher probability of advancing in the tournament. We can see that by increasing our ts\_pct by one standard deviation, we believe that our odds will increase  (with 95\% probability)  between 1.13 times and 1.41 times on average. 
+	\item[sos] This is the strength-of-schedule variable. We can see that those teams with a larger strength-of-schedule tend to do far better in the tournament. This is intuitive and is in-line with what we would expect. Teams that are in more difficult conferences and make it to the tournament tend to do very well in the field.  If we increase our strength-of-schedule measure by one standard deviation, we expect our odds of moving to the next level (with 95\% probability) to increase by 2.27 times to 2.94 times.
 	\item[games] Teams that tend to play more games throughout the season tend to move higher in the tournament. This is the ``big-team'' effect. Those teams that tend to play more games throughout the season tend to be larger schools with a larger focus on the sport of basketball. Increasing our games played by one standard deviation increases our likelihood (with 95\% probability) between 2.86 times and 3.74 times. 
-	\item[fg3a\_per\_fga\_pct] Teams that tend to take a disproportionate number of three pointers tend to do worse in the tournament. This may be selection bias, as those teams that tend to be down tend to take more threes on average. However, this was an interesting effect and one that we were not expecting to see. Increasing our amount of threes taken as a percentage of field goals by one standard deviation multiplies our likelihood (with 95\% probability) between 0.74 times and 0.93 times. 
-	\item[trb\_pct] Teams that tend to rebound more tend to do better in the tournament. Increasing our rebounding rate by one standard deviation multiplies our likelihood (with 95\% probability) between 1.01 times and 1.26 times. 
+	\item[fg3a\_per\_fga\_pct] Teams that tend to take a disproportionate number of three pointers tend to do worse in the tournament. This may be a result of the fact that three point shots are high risk, high reward, so teams that take a lot of threes may have difficulty sustaining success over many games. Increasing our amount of threes taken as a percentage of field goals by one standard deviation multiplies our likelihood (with 95\% probability) between 0.74 times and 0.93 times. 
+	\item[trb\_pct] Teams that tend to rebound more tend to do better in the tournament. A one standard deviation increase in rebounding percentage multiplies our likelihood (with 95\% probability) between 1.01 times and 1.26 times. 
 \end{description}
-All of the other coefficients contain zero in their confidence interval which indicates to us that we do not have significant evidence that there is any effect in using these predictors will improve the odds of someone making it to the next level of the tournament. Overall, the coefficients that were highly non-zero tend to indicate that better teams do well in the tournament, which is not really a surprise, but the sign of the proportion of shots that were threes surprised us. 
+All of the other coefficients contain zero in their confidence intervals, which indicates to that we do not have significant evidence that these predictors have an effect on the odds of a team making it to the next round of the tournament. Overall, the coefficients that were highly non-zero tend to indicate that better teams do well in the tournament, which is not really a surprise, but the sign of the coefficient on three point attempts per field goal attempt surprised us. 
 
 
 \subsubsection{In-Sample Predictive Performance}
-The in-sample performance of the ordinal regression method is given by the following 7x7 confusion matrix (the left column is the true values and the top row is the predicted values). We given the in-sample error not to show our prediction accuracy, but as a method of model checking. Our inference that we hoped to gain from the ordinal regression model was more inferential than predictive, and the in-sample error is a good indication of the fit of the model then it is a sign of the predictive accuracy of the model. 
+The in-sample performance of the ordinal regression method is given by the following 7x7 confusion matrix (rows correspond to predicted win totals and columns correspond to actual win totals, with both ranging from 0 to 6). We give the in-sample error not to show our prediction accuracy, but as a method of model checking. Our goal in fitting the ordinal regression model was more inferential than predictive, and the in-sample error is a better indication of the fit of the model than it is a sign of the predictive accuracy of the model. 
 \begin{figure}[H]
 	\centering
 	\input{"../fig/polr_predictions.txt"}
-\caption{On the left are the true classes and along the top are the predictions from the ordinal regression analysis using the \textit{argmax} of the posterior to discern what the choice of the Bayesian interpretation of the ordinal regression would predict. We can see that the model is decent at classifying the early rounds - of the teams that were eliminated in the first round, 636 were classified correctly, 135 were incorrectly classified as going to the first round, and 3 were projected to go to the second round. However, the model also appears downwards biased. We can see that of the teams that won the tournament, the model sometimes only said that they would make it one round, and we can see that the model was not able to identify those teams that made it to the finals easily - there were no teams for which we predicted five rounds of advancement. This class may be very hard to identify in general.}
+\caption{On the left are the true classes and along the top are the predictions from the ordinal regression analysis using the \textit{argmax} of the posterior to discern what the choice of the Bayesian interpretation of the ordinal regression would predict. We can see that the model is decent at classifying the early rounds. Of the teams that were eliminated in the first round, 636 were classified correctly, 135 were incorrectly classified as winning one game, and 3 were projected to win two games. However, the model also appears downwards biased. We can see that of the teams that won the tournament, the model sometimes only said that they would make it one round, and we can see that the model was not able to identify those teams that made it to the finals easily. There were no teams for which we predicted five rounds of advancement. This class may be very hard to identify in general.}
 \end{figure}
 
-In summary, our overall in-sample error rates for ordinal regression are below
+In summary, our overall in-sample error rates for ordinal regression are below.
 \begin{figure}[H]
 	\centering 
 	\begin{tabular}{cc}
@@ -473,7 +460,7 @@ In summary, our overall in-sample error rates for ordinal regression are below
 		Prediction $<$ Actual Error Rate & 33.89\%\\ 
 		\bottomrule
 	\end{tabular}
-	\caption{For a simple algorithm, the fact that we are seeing over 55\% prediction accuracy on a seven-dimensional confusion matrix, and achieving almost 90\% accuracy on a plus / minus one prediction basis on very noisy season data is an accomplishment in and of itself. The downward bias of the model is evident in the fact that almost 34\% of the predictions were under the actual result, and so this is something that we will need to take into account when using the model for prediction}
+	\caption{For a simple algorithm, the fact that we are seeing over 55\% prediction accuracy on a seven-dimensional confusion matrix, and achieving almost 90\% accuracy on a plus / minus one prediction basis on very noisy data set is an accomplishment in and of itself. The downward bias of the model is evident in the fact that almost 34\% of the predictions were under the actual result, and so this is something that we will need to take into account when using the model for prediction}
 \end{figure}
 
 
@@ -529,7 +516,7 @@ In summary, our overall in-sample error rates for ordinal regression are below
 \section{Ensemble Prediction Model}
 \subsection{Introduction}
 
-We have now seen the predictive ability in both Ordinal Regression and in some of the methods introduced in the data-exploration. Having looked at the problem for some time, and made inferences about the parameters and the way that the data interacts with how far someone goes in the tournament, we now look for a potential black-box model that may be able to outperform the native methods in terms of predictive accuracy. 
+We have now seen the predictive ability in both ordinal regression and in some of the methods introduced in the data-exploration. Having looked at the problem for some time, and made inferences about the parameters and the way that the data interacts with how far someone goes in the tournament, we now look for a potential black-box model that may be able to outperform the native methods in terms of predictive accuracy. 
 
 This section aims to detail the search for that model and the methods employed to get the most predictive accuracy that we can out of several models. We aim to use an ensemble model to bring in multiple players into the act, and our hope is that this model can outperform the methods that we have already seen thus far. 
 
