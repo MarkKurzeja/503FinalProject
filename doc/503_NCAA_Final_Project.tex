@@ -373,7 +373,7 @@ Extending this analysis via alternative distance measures produces consistent re
 	\caption{2D MDS plots of clusters: single linkage, complete linkage, and Ward's method, Manhattan distance}
 \end{figure}
 
-Using Manhattan distances, like Euclidean gives a largely uninformative single linkage clustering.
+Using Manhattan distances, like Euclidean, gives a largely uninformative single linkage clustering.
 
 \begin{figure}[H]
 	\centering
@@ -416,6 +416,56 @@ Ward's method returns a more typical subgrouping of one cluster of weaker teams 
 \end{figure}
 
 Silhouette plots and widths for these two methods rank them as slightly stronger than the Euclidean distance clusters but still less efficient separations than k-Means.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{"../fig/gower"}
+	\caption{2D MDS plots of clusters: single linkage, complete linkage, and Ward's method, Gower distance}
+\end{figure}
+
+Using Gower distances also gives a largely uninformative single linkage clustering- one large cluster with isolated exception points.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/comp3}
+	\caption{Wins by cluster and 2D MDS plot of clusters, complete linkage, Gower distance}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/compweak3}
+	\caption{Standardized mean difference from full data, complete linkage, Gower distance}
+\end{figure}
+
+Again, the complete linkage is highly consistent with our previous results, giving one weak cluster.  In Gower distance, the extremity of the predictors relative to normal observations seems somewhat greater.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/ward3}
+	\caption{Wins by cluster and 2D MDS plot of clusters, Ward's method, Gower distance}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../fig/wardweak3}
+	\caption{Standardized mean difference from full data, Ward's method, Gower distance}
+\end{figure}
+
+Ward's method is consistent.  The low-win cluster again has very similar characteristics to previous low-win clusters.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{"../fig/compsil3"}
+	\caption{Silhouette plot, complete linkage, Gower distance}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{"../fig/wardsil3"}
+	\caption{Silhouette plot, Ward's method, Gower distance}
+\end{figure}
+
+Silhouette plots and widths for these two methods rank the complete linkage as the weakest clustering to date.  Ward's method sees improvements over the previous distance metrics but not over k-Means.
 
 \subsubsection{Mixture Modeling}
 
