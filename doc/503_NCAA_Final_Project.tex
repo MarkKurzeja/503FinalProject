@@ -304,9 +304,66 @@ K-means clustering over four categories produces encouraging results not dissimi
 
 Relative to the general data, the observations in this cluster have substantially lower values of SRS and SOS, with less extreme negative differences from the norm in Assists, Blocks, Effective Field Goals, Rebounds, True Shooting, and Win rates, along with a slightly higher than typical Turnover Percentage.  Teams with these characteristics, per our k-Means cluster, can be said to be of a kind and poorly set up to do well in the NCAA finals.
 
+\begin{figure}[H]
+	\centering
+	\input{"../fig/kmeansil"}
+	%	\caption{}
+\end{figure}
+
+With this said, clustering does appear somewhat close to ambiguous, with an average silhouette width of .13.  Some of the weakest clusterings occur in the fourth category, which is particularly concerning, as we believe that one to be of greatest interest in identifying weak teams.
+
 \subsubsection{Hierarchical Clustering}
 
-Next we examine if we can see similar distinctions under hierarchical clustering.
+\begin{figure}[H]
+	\centering
+	\input{"../fig/areyouheigh"}
+	%	\caption{}
+\end{figure}
+
+Next we examine if we can see similar distinctions under hierarchical clustering.  Under Euclidean distances, this turns out to be the case for complete linkage and Ward's method but not for single linkage, which maps everything except for two isolated observations into a single cluster.  It would appear that the heavy degree of noise in our dataset prevents a more meaningful clustering under the latter dissimilarity measure.
+
+\begin{figure}[H]
+	\centering
+	\input{"../fig/comp1"}
+	%	\caption{}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\input{"../fig/ward1"}
+	%	\caption{}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\input{"../fig/compweak"}
+	%	\caption{}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\input{"../fig/wardweak"}
+	%	\caption{}
+\end{figure}
+
+
+The complete linkage and Ward's method clusters are very much similar to our k-Means cluster, though in the case of the former one cluster dominates most observations.  The differences in the predictors between the weak group and the general dataset are very similar to what we observed in the previous method, though somewhat more extreme in the case of complete linkage.
+
+\begin{figure}[H]
+	\centering
+	\input{"../fig/compsil"}
+	%	\caption{}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\input{"../fig/wardsil"}
+	%	\caption{}
+\end{figure}
+
+The silhouettes for these methods show much more ambiguity than in the k-Means case: complete linkages have an average width of .07 and Ward's method .08, both with striking potential for misclustering in clusters 1 and 4.  On the whole these appear to be less suitable than K-means.
+
+\subsubsection{Mixture Modeling}
 
 \missingfigure{Under Construction}
 
