@@ -81,7 +81,7 @@
 \RequirePackage{siunitx}
 \newcommand{\commasep}[1]{\num[group-separator={,}]{#1}}
 \newcommand{\money}[1]{\$\commasep{#1}}
-
+\usepackage{forest}
 % Borrowing from tufte, this is the \newthought command that is 
 % often used to bring about the change from one subsubsection
 % to another and is a good way to bring things up logically into smaller
@@ -155,23 +155,32 @@
 
 \begin{document}
 \pagestyle{plain} 
-\title{\rmfamily\normalfont\spacedallcaps{Learning the Madness - NCAA March Madness Predictions}}
+\title{\rmfamily\normalfont\spacedallcaps{Learning the Madness  NCAA March Madness Predictions}}
 \author{\spacedlowsmallcaps{Andrei Kopelevich $\bullet$ Mark Kurzeja $\bullet$ Eli Schultz }}
 \date{} % no date or \today if you want to insert a date
 
 \maketitle
 
-\begin{abstract}
-	Every year, millions of people fill out March Madness brackets in attempt to predict the outcome of the NCAA men's basketball tournament. A big part of the draw is that the tournament is notoriously difficult to predict, and predicting a perfect bracket is so improbable that Warren Buffet, a US investor, annually offers \$1MM a year for life to any of his employees who can predict the exact outcome of the tournament. Many algorithms for predicting the tournament attempt to predict results at the individual game level, based on how teams match up with one another. We will instead focus on predicting how many rounds a team will progress in the tournament based on its performance over the course of the preceding season, with the goal of building stable predictions and successfully predicting tournament outcomes.
-\end{abstract}
+\newpage
 
+\hfill
+\vspace{1cm}\hfill
+
+\begin{abstract}
+	Every year, millions of people fill out March Madness brackets in attempt to predict the outcome of the NCAA men's basketball tournament. A big part of the draw is that the tournament is notoriously difficult to predict, and predicting a perfect bracket is so improbable that Warren Buffet, a US investor, annually offers \$1MM a year for life to any of his employees who can predict the exact outcome of the tournament. Many algorithms for predicting the tournament attempt to predict results at the individual game level, based on how teams match up with one another. We will instead focus on predicting how many rounds a team will progress in the tournament based on its performance over the course of the preceding season, with the goal of building stable and consistent predictions of tournament outcomes.
+\end{abstract}
 \tableofcontents
 \newpage
 
 \section{Background}
+\subsection{Problem Description}
 After all regularly scheduled NCAA basketball games are concluded in mid-March, 68 teams are selected to participate in the NCAA tournament. Every game is single elimination, meaning that as soon as a team loses it is eliminated from the tournament. Eight of the 68 teams originally chosen have to compete in so-called play-in games, after which 64 teams remain. We will follow the same framework as that followed by most bracket prediction contests and concern ourselves here with predicting how teams will perform once the field has been narrowed down to 64 contenders. At this point there are $2^{32} \cdot 2^{16} \cdot 2^8 \cdot 2^4 \cdot 2^2 \cdot 2 = 2^{63}$ possible outcomes, which gives one an idea of the scope of this challenge. Predicting a perfect bracket may be impossible, but we will see how close we can get.
 
+\subsection{The Data Set}
+
 The first step in our analysis was gathering data. There are many decades of team performance data available on the Sports Reference college basketball website free of charge. However, in recent years a number of more advanced metrics have been devised that have been shown to more accurately capture a team's strength. Since this data is only available starting from 1993, we limited our analysis to that timeframe. Our working data set ultimately consisted of 12 continuous quantitative predictors, and one categorical response corresponding to the number of victories a team had in the tournament (ranging from 0 for a team that lost immediately to 6 for a national champion).
+
+\subsubsection{Feature Description}
 
 The predictors can be thought of as belonging to six broad buckets corresponding to aspects of a team performance:
 
@@ -189,10 +198,14 @@ It is worth noting that the vast majority of these statistics capture how well a
 \section{Preliminary Data Exploration}
 
 \subsection{Data Exploration and Visualization}
+
+\subsubsection{Data Summaries and Discussion}
+
 We began by performing data exploration and visualization, as well as dimension reduction, to inform our analysis.
 
 Summaries of the predictors are provided below.
 
+\missingfigure{Can we use x-table or similar so that this is not a screenshot? Or just change the background to white?}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\linewidth]{../fig/Summary}
@@ -204,24 +217,29 @@ At a high level, the first three predictors provide a good sanity check in that 
 
 It is also worth noting that a number of the predictors have unusually large and/or small outliers. To visualize high-level trends in the predictors, boxplots of each of the predictors for each of the six tournament win groups are provided below. Some of the predictors, such as assist percentage and the two free-throw related predictors, seem to be fairly similarly distributed across the six groups. However, there are a number of pronounced patterns. For instance, more successful tournament teams generally tend to much higher win-loss percentages, SRS, and SOS scores. This is also true, although to a lesser extent, for true shooting percentage, effective field goal percentage, total rebound percentage, and block percentage. Similarly, more successful teams tend to have lower turnover rates. 
 
+\missingfigure{Can we get a PDF of this?}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/RayleighWetDream}
+	\includegraphics[width=1\linewidth]{../fig/RayleighWetDream}
 	\caption{caption goes here}
 	\label{fig:rayleighwetdream}
 \end{figure}
 
+\subsubsection{Discussion of Correlations}
 
 A pairwise scatterplot of the predictors is provided below. Many of the correlations are relatively small. Unsurprisingly, in some cases where two predictors belong to the same bucket (per the framework above) we notice very strong correlations. Effective field goal percentage and true shooting percentage are the most strongly correlated predictors ($r \approx 0.96$), which is to be expected given that both measure how well a team shoots the ball. Free throw rate and free throw attempts per field goal attempt ($r \approx 0.922$) both capture how often a team tends to shoot free throws in slightly different ways. Finally, the strong correlations between SRS and wining percentage ($r \approx 0.518$) and SRS and SOS ($r \approx 0.867$) reflect the fact that SRS is meant to capture team performance, adjusted for strength of schedule.
 
+\missingfigure{Can we get a PDF of this?}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/MoneyMaker}
+	\includegraphics[width=1\linewidth]{../fig/MoneyMaker}
 	\caption{caption goes here}
 	\label{fig:ggpairs}
 \end{figure} 
 
 However, there are a few other correlations that are much weaker, but perhaps a little more interesting for the purposes of our model. For instance, there is a weak negative correlation between rebounding percentage and free throw attempts per field goal attempt ($r \approx -0.311$), a correlation which does not seem to have an obvious intuitive explanation based on the buckets outlined above. Similarly, both true shooting percentage ($r \approx 0.273$) and effective field goal percentage ($r \approx 0.282$) were weakly correlated with three point attempts per field goal attempt.
+
+\subsubsection{Dimension Reduction}
 
 Overall, the presence of these correlations suggests that it may be useful to perform PCA in an attempt to reduce overall dimensionality for the purposes of preliminary investigation and visualization.
 
@@ -246,7 +264,7 @@ From a numeric standpoint, there is no obvious cutoff here. We do see that that 
 
 While we do not necessarily observe perfect clustering corresponding to each of the possible win totals, it is encouraging to see that in general the principal components seem to separate better-performing teams (represented by the lighter colors above) from weaker teams (represented by the darker blue above). 
 
-Although it only explains roughly 25\% of the variance in the data, the first principal component in particular seems to do a fairly good job of differentiating weak teams from strong ones, with teams that advanced further in the tournament tending to have lower scores for that component. The first principal component can roughly be interpreted as a negative average of winning percentage, SOS, SRS, effective field goal percentage, and true shooting percentage (although there are small contributions from a few other variables as well). In context, this result suggests that just looking at team's overall performance and ability to shoot gives a decent first order idea of whether or not it will perform well in the tournament.
+Although it only explains roughly 25\% of the variance in the data, the first principal component, in particular, seems to do a fairly good job of differentiating weak teams from strong ones, with teams that advanced further in the tournament tending to have lower scores for that component. The first principal component can roughly be interpreted as a negative average of winning percentage, SOS, SRS, effective field goal percentage, and true shooting percentage (although there are small contributions from a few other variables as well). In context, this result suggests that just looking at team's overall performance and ability to shoot gives a decent first order idea of whether or not it will perform well in the tournament.
 
 \subsection{Clustering}
 Piggybacking on the suggestive outcomes of our PCA analysis, we can see if our data can be clustered meaningfully.  If we can group our observations into 'kinds of team', those classes could in turn show a relationship with tournament wins.  Like PCA, this would potentially allow us to simplify our interpretation of the many, complicated predictors into one of simply 'teams with winning characteristics' and 'teams without winning characteristics'.  Unlike PCA, clustering allows us to organize our data into homogenous subgroups using our full data, rather than relying on a lower-dimensional projection.
@@ -347,7 +365,7 @@ When looking at our problem, we ran into an issue with the domain of the respons
 \subsubsection{Fitting the First Model}
 For the ordinal regression problem, we chose to use the \texttt{rstanarm polr} functions, as this allows us to view the posterior distributions of the coefficients, and determine the uncertainty that we have around each of our estimates. We chose to do the Bayesian variant of ordinal regression as sports data is notoriously noisy and most predictors will have little relationship with our outcome of interest. We need to quantify errors more precisely as a result, and this method allows us to do so. We begin by standardizing the variables means and variance. Otherwise, the coefficients will not be on the same unit scale and we want to avoid this in our analysis. We begin by excluding the teams names themselves to see if the other predictor variables can be used to discern performance. 
 
-After running the model, we run the checks on the posterior distribution, and see that each of the four chains used have, indeed, converged, there was no divergences in any of the four chains, and the tree-depth was not hit on any of the iterations signaling that the prior distribution on $R^2$ was sufficiently informative enough to ensure that the chains did not explore too distant from the true posterior distribution. For information on how the prior distribution is set up or on the operation of \texttt{rstanarm}, please refer to the guide here: {\color{blue} \url{https://cran.r-project.org/web/packages/rstanarm/rstanarm.pdf}}
+After running the model, we run the checks on the posterior distribution, and see that each of the four chains used have, indeed, converged, there was no divergences in any of the four chains, and the tree-depth was not hit on any of the iterations signaling that the prior distribution on $R^2$ was sufficiently informative enough to ensure that the chains did not explore too distant from the true posterior distribution\footnote{For information on how the prior distribution of $R^2$ or on the operation of \texttt{rstanarm}, please refer to the guide here: {\color{blue} \url{https://cran.r-project.org/web/packages/rstanarm/rstanarm.pdf}}}. 
 
 The posterior distributions for the log-odds of the parameters are as follows:
 
@@ -422,7 +440,7 @@ We begin by looking for those coefficients that do not contain zero in their con
 All of the other coefficients contain zero in their confidence interval which indicates to us that we do not have significant evidence that there is any effect in using these predictors will improve the odds of someone making it to the next level of the tournament. Overall, the coefficients that were highly non-zero tend to indicate that better teams do well in the tournament, which is not really a surprise, but the sign of the proportion of shots that were threes surprised us. 
 
 
-\subsubsection{In-Sample Performance}
+\subsubsection{In-Sample Predictive Performance}
 The in-sample performance of the ordinal regression method is given by the following 7x7 confusion matrix (the left column is the true values and the top row is the predicted values). We given the in-sample error not to show our prediction accuracy, but as a method of model checking. Our inference that we hoped to gain from the ordinal regression model was more inferential than predictive, and the in-sample error is a good indication of the fit of the model then it is a sign of the predictive accuracy of the model. 
 \begin{figure}[H]
 	\centering
@@ -430,6 +448,22 @@ The in-sample performance of the ordinal regression method is given by the follo
 \caption{On the left are the true classes and along the top are the predictions from the ordinal regression analysis using the \textit{argmax} of the posterior to discern what the choice of the Bayesian interpretation of the ordinal regression would predict. We can see that the model is decent at classifying the early rounds - of the teams that were eliminated in the first round, 636 were classified correctly, 135 were incorrectly classified as going to the first round, and 3 were projected to go to the second round. However, the model also appears downwards biased. We can see that of the teams that won the tournament, the model sometimes only said that they would make it one round, and we can see that the model was not able to identify those teams that made it to the finals easily - there were no teams for which we predicted five rounds of advancement. This class may be very hard to identify in general.}
 \end{figure}
 
+In summary, our overall in-sample error rates for ordinal regression are below
+\begin{figure}[H]
+	\centering 
+	\begin{tabular}{cc}
+		\toprule
+		Measure Name & Measure\\ 
+		\midrule
+		Total Number of Games & 1570\\ 
+		Prediction=Actual Accuracy & 55.73\%\\ 
+		+/- 1 Prediction Accuracy & 89.55\%\\ 
+		Prediction $>$ Actual Error Rate & 10.38\%\\ 
+		Prediction $<$ Actual Error Rate & 33.89\%\\ 
+		\bottomrule
+	\end{tabular}
+	\caption{For a simple algorithm, the fact that we are seeing over 55\% prediction accuracy on a seven-dimensional confusion matrix, and achieving almost 90\% accuracy on a plus / minus one prediction basis on very noisy season data is an accomplishment in and of itself. The downward bias of the model is evident in the fact that almost 34\% of the predictions were under the actual result, and so this is something that we will need to take into account when using the model for prediction}
+\end{figure}
 
 
 
@@ -483,9 +517,55 @@ The in-sample performance of the ordinal regression method is given by the follo
 
 \section{Preliminary Discussion of Methods}
 
-\subsection{Methods Used}
- \subsection{Discussion of Stacking}
-\subsection{What data is available?}
+We have now seen the predictive ability in both Ordinal Regression and in some of the methods introduced in the data-exploration. Having looked at the problem for some time, and made inferences about the parameters and the way that the data interacts with how far someone goes in the tournament, we now look for a potential black-box model that may be able to outperform the native methods in terms of predictive accuracy. 
+
+This section aims to detail the search for that model and the methods employed to get the most predictive accuracy that we can out of several models. We aim to use an ensemble model to bring in multiple players into the act, and our hope is that this model can outperform the methods that we have already seen thus far. 
+
+\subsection{Discussion of Stacking}
+
+\textit{Stacking} is a type of ensemble model that aims to combine the outputs of several models that exhibit low to medium correlation and produce estimates that are better than any of the models that it was produced from. The idea of stacking is follows:
+
+\newcommand{\dattrain}{\ensuremath{Data_{train}}\xspace}
+\newcommand{\datval}{\ensuremath{Data_{validation}}\xspace}
+\newcommand{\dattest}{\ensuremath{Data_{test}}\xspace}
+\newcommand{\dattestpreds}{\ensuremath{Data_{test + preds}}\xspace}
+\newcommand{\datvaltest}{\ensuremath{Data_{validation + preds}}\xspace}
+
+\begin{enumerate}
+	\item Break the data into three pieces: 
+	\begin{enumerate}
+		\item Training Data (\dattrain) 
+		\item Validation Data (\datval)
+		\item Testing Data (\dattest)
+	\end{enumerate}
+	\item Build up $M$ different models on \dattrain. These can be Neural Nets, SVM, Ordinal Regression, Random Forests, etc. Models with different parameters count as ``different'' models.
+	\item Out of the $M$ models, find $k$ so called $m^{\star}$ models that exhibit relatively low correlation (in prediction on \dattrain)
+	\item Once we have selected our $k$ $m^{\star}$ models, we then concatenate our data to the prediction results of the $m^{\star}$ models on \datval. We will produce a dataframe that looks as follows (named \datvaltest):
+	\begin{align*}
+	\begin{array}{|c|cccc|}
+		\toprule
+		\text{Data} & \text{Prediction 1} & \text{Prediction 2} & \cdots & \text{Prediction k} \\ 
+		\midrule
+		- \datval - & m_1^{\star}(\datval) & m_2^{\star}(\datval) & \cdots & m_k^{\star}(\datval) \\ 
+		\vdots & \vdots & \vdots & \vdots & \vdots\\
+		\bottomrule
+	\end{array} 
+	\end{align*}
+	\item Train a ``stacker'' model (usually just a regression model but this can be a more complex model as well) on \datvaltest . This model is combining the prediction of the simpler models into a weighed vote which is the output of the stacked model. The goal is to create a classifier that is able to combine the strengths of a bunch of smaller models into a strong classifier. It does so by finding the ``expert model'' for each subset of the data and up-weighting this models prediction in its ensemble vote.
+	\item Use the stacked classifier as well as the $m^{\star}$ models to make predictions for \dattest
+\end{enumerate} 
+
+\subsection{Visual Depiction of Stacking}
+\begin{figure}[H]
+	\centering
+	\begin{forest}
+		[Final Predictions [\dattestpreds [\dattest] [$m^\star_1$ [\dattrain]] [$m^\star_2$ [\dattrain] ][$\cdots$][$m^\star_k$ [\dattrain]]] [Stacked Model [\datvaltest [\datval] [$m^\star_1$ [\dattrain]][$\cdots$][$m^\star_k$ [\dattrain]]] ]]
+	\end{forest}
+\caption{A visual layout of the way that a stacked model is created. By choosing models with low correlation to build off of, the stacked model is able to find which model is the ``expert'' in a given subregion of the data and up-weight the output of that model in its ensemble prediction. We then use these micro-models, in combination with the stacked model, to make predictions. }
+\end{figure}
+
+
+
 \section{Discussion of Implementation}
 
 \section{Model Results}
