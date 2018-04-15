@@ -120,7 +120,7 @@
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
-\definecolor{harvard}{HTML}{c90016}
+\definecolor{harvard}{RGB}{145,60,58}
 
 \lstset{ %
   backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
@@ -156,8 +156,8 @@
 
 \begin{document}
 \pagestyle{plain} 
-\title{\color{harvard}\rmfamily\normalfont\spacedallcaps{Learning the Madness  NCAA March Madness Predictions}}
-\author{\spacedlowsmallcaps{Andrei Kopelevich $\bullet$ Mark Kurzeja $\bullet$ Eli Schultz }}
+\title{\color{harvard}\rmfamily\normalfont {\Huge  \spacedallcaps{Learning the Madness}} \\ \vspace{-.4cm}\hfill\\ {\LARGE \textit{NCAA March Madness Predictions}}}
+\author{\textsc{Andrei Kopelevich}\\ \textsc{Mark Kurzeja}\\ \textsc{Eli Schultz} }
 \date{} % no date or \today if you want to insert a date
 
 \maketitle
@@ -166,7 +166,7 @@
 \vfill
 
 \begin{center}
-	\large \color{harvard} \spacedlowsmallcaps{April 16$^{th}$, 2018 \hspace{1mm} $\vert$ \hspace{1mm} Professor Long}
+	\large \color{harvard}   \textit{Professor Nguyen Long - Stats 503} \\ \spacedlowsmallcaps{April 16$^{th}$, 2018} 
 \end{center}
 
 \newpage
@@ -186,7 +186,7 @@ After all regularly scheduled NCAA basketball games are concluded in mid-March, 
 
 \subsection{The Data Set}
 
-The first step in our analysis was gathering data. There are many decades of team performance data available on the Sports Reference college basketball website free of charge. However, in recent years a number of more advanced metrics have been devised that have been shown to more accurately capture a team's strength. Since this data is only available starting from 1993, we limited our analysis to that timeframe. Our working data set ultimately consisted of 12 continuous quantitative predictors, and one categorical response corresponding to the number of victories a team had in the tournament (ranging from 0 for a team that lost immediately to 6 for a national champion).
+The first step in our analysis was gathering data. There are many decades of team performance data available on the Sports Reference college basketball website free of charge \cite{bballsite}. However, in recent years a number of more advanced metrics have been devised that have been shown to more accurately capture a team's strength. Since this data is only available starting from 1993, we limited our analysis to that timeframe. Our working data set ultimately consisted of 12 continuous quantitative predictors, and one categorical response corresponding to the number of victories a team had in the tournament (ranging from 0 for a team that lost immediately to 6 for a national champion).
 
 \subsubsection{Feature Description}
 
@@ -526,7 +526,8 @@ In summary, our overall in-sample error rates for ordinal regression are below
 %\end{figure}
 
 
-\section{Preliminary Discussion of Methods}
+\section{Ensemble Prediction Model}
+\subsection{Introduction}
 
 We have now seen the predictive ability in both Ordinal Regression and in some of the methods introduced in the data-exploration. Having looked at the problem for some time, and made inferences about the parameters and the way that the data interacts with how far someone goes in the tournament, we now look for a potential black-box model that may be able to outperform the native methods in terms of predictive accuracy. 
 
@@ -577,11 +578,20 @@ This section aims to detail the search for that model and the methods employed t
 
 
 
-\section{Discussion of Implementation}
+\subsection{Discussion of Implementation}
 
-\section{Model Results}
+\subsection{Model Results}
 
 \section{Conclusion and Further Research}
+
+\newpage
+\begin{thebibliography}{9}
+	
+	\bibitem{bballsite}
+	“NCAA Tournament History.” Edited by Sports Reference LLC, College Basketball at Sports-Reference.com, {\color{blue} \url{www.sports-reference.com/cbb/postseason/}}.
+	
+\end{thebibliography}
+
 
 
 \end{document}
