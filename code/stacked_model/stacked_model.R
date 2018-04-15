@@ -19,6 +19,7 @@ library(e1071)
 library(party)
 library(ggplot2)
 library(tidyr)
+library(adabag)
 
 
 ################################################################################
@@ -26,7 +27,7 @@ library(tidyr)
 #                                Problem Setup                                 #
 #                                                                              #
 ################################################################################
-setwd("C:/Users/Mark/Dropbox/Graduate School/05) Courses/Stats 503/503FinalProject/code/stacked_model")
+setwd("C:/Users/Mark k/Dropbox/Graduate School/05) Courses/Stats 503/503FinalProject/code/stacked_model")
 load("data_train.data")
 load("data_validation.data")
 load("data_test.data")
@@ -59,7 +60,6 @@ a_ply(decisionMatrix, 1, function(i) {
   
 }, .progress = progress_win("Random Forest Progress"))
 
-                              
 ################################################################################
 #                                                                              #
 #                                Decision Trees                                #
@@ -168,29 +168,31 @@ a_ply(decisionMatrix, 1, function(i) {
 
 ################################################################################
 #                                                                              #
-#                                    Kmeans                                    #
+#                                   Adaboost                                   #
 #                                                                              #
 ################################################################################
-# decisionMatrix <- expand.grid(k = 1:7, nstart = 1:6, stringsAsFactors = F)
-# 
-# a_ply(decisionMatrix, 1, function(i) {
-#   browser()
-#   train_dat_in <- data_train %>% dplyr::select(-key)
-#   name = sprintf("KMeans_k_%i_nstart_%i", i$method, i$nstart)
-#   
-#   model <- kmeans(x = train_dat_in)
-#   valout <- predict(model, data_validation %>% dplyr::select(-key))
-#   testout <- predict(model, data_test %>% dplyr::select(-key))
-#   
-#   valout %<>% as.numeric %>% data.frame()
-#   names(valout) <- name
-#   testout %<>% as.numeric %>% data.frame()
-#   names(testout) <- name
-#   
-#   validation_out <<- cbind(validation_out, valout)
-#   test_out <<- cbind(test_out, testout)
-#   
-# }, .progress = progress_win("K-Means Progress"))
+decisionMatrix <- expand.grid(mfinal = c(20, 50, 100), 
+                              coeflearn = c("Breiman", "Freund"), 
+                              stringsAsFactors = F)
+
+a_ply(decisionMatrix, 1, function(i) {
+  
+  train_dat_in <- data_train %>% dplyr::select(-key)
+  name = sprintf("ABOST_mfinal_%i_coefl_%.3s", i$mfinal, i$coeflearn)
+  model <- boosting(schoolwins ~ ., data = train_dat_in, mfinal = i$mfinal,
+                    coeflearn = i$coeflearn)
+  valout <- predict(model, data_validation %>% dplyr::select(-key))
+  testout <- predict(model, data_test %>% dplyr::select(-key))
+
+  valout %<>% .$class %>% as.numeric %>% data.frame()
+  names(valout) <- name
+  testout %<>% .$class %>% as.numeric %>% data.frame()
+  names(testout) <- name
+
+  validation_out <<- cbind(validation_out, valout)
+  test_out <<- cbind(test_out, testout)
+
+}, .progress = progress_win("Adaboost Progress"))
 
 ################################################################################
 #                                                                              #
@@ -198,7 +200,8 @@ a_ply(decisionMatrix, 1, function(i) {
 #                                                                              #
 ################################################################################
 
-# Method - rank by smallest correlation to others and by best fit - then do a rank weight of those
+# Method - rank by smallest correlation to others and by best fit 
+# then do a rank weight of those
 firstColOfModels <- ncol(data_train) + 1
 totalCols <- ncol(validation_out)
 selectedModels <- numeric(0)
@@ -207,14 +210,14 @@ npreds <- 20
 
 # Employ a greedy algorithm that does the following:
 # Gets all models that have not been selected already
-# out of those, find the model that has the lowest corrleation to those selected and highest accuracy
+# out of those, find the model that has the lowest corrleation 
+#    to those selected and highest accuracy
 # Find npreds number of such models 
 # Stop when done!
 for(modelnum in seq_len(npreds)) {
   modelsToConsider = setdiff(firstColOfModels:totalCols, selectedModels)
   rankings <- ldply(modelsToConsider, function(col) {
     totalCor = 0
-    # allidx = setdiff(modelsToConsider, col)
     
     # If we don't have a model yet, just select the one with the greatest accuracy
     if (length(selectedModels) == 0) {
@@ -257,15 +260,12 @@ PMOneError_stacked = mean(abs(as.numeric(as.character(predict(stacked_model, tes
 
 cat(sprintf("Error Analysis:\n   Final Accuracy: %f\n   PMOneError : %f", FinalAccuracy_stacked * 100, 100 * PMOneError_stacked))
 
-
 # Get the accuracy for each of the individual models that the stacked model will be trained on
 standAloneAccuracy = numeric(0)
 standAlonePMOneError = numeric(0)
 for(i in firstColOfModels:(firstColOfModels + npreds - 1)) {
   standAloneAccuracy = append(standAloneAccuracy, mean(test_out[,i]== test_out$schoolwins))
   standAlonePMOneError = append(standAlonePMOneError, mean(test_out[,i] - as.numeric(as.character(test_out$schoolwins)) <= 1))
-  
-  # cat(sprintf("\nError Analysis:\n   Final Error: %f\n   PMOneError : %f", FinalAccuracy * 100, 100 * PMOneError))
 }
 
 # Append the Stacked model accuracy to the end of the vectors
@@ -278,7 +278,6 @@ pnf <- factor(plotnames, levels = plotnames, ordered = T)
 
 plotdat <- data.frame(`Overall Accuracy` = standAloneAccuracy, 
                       `+/-1 Accuracy` = standAlonePMOneError, 
-                      # idx = c(rep("Single Model",npreds), "Stacked Model"),
                       idx = pnf,
                       check.names = F) %>% 
   tidyr::gather("key", "value", -idx) %>% 

@@ -21,6 +21,9 @@
 \usepackage{amssymb}
 \usepackage{nicefrac} % For typsetting inline fractions
 \usepackage{mathtools} % For substack and mathclap (underbrace helper commands)
+\usepackage{algpseudocode}
+\usepackage{tcolorbox}
+%\usepackage[]{algorithm2e}
 
 %% Typography enhancements
 \usepackage{microtype} % For awesome typographical improvements
@@ -729,6 +732,49 @@ This section aims to detail the search for that model and the methods employed t
 
 
 \subsection{Discussion of Implementation}
+For the stacked model, we choose to use the following components as our sub models:
+\begin{description}
+	\item [Random Forests] varying the number of variables to sample for the trees and the maximum number of nodes
+	\item [Decision Trees] varying the number of variables to use for the decisions, the maximum depth of the tree, and the minimum splitting criterion
+	\item [Ordinal Regression] varying the link function between logistic, probit, and loglog
+	\item [Multinomial Regression] with no variations
+	\item [SVM] with linear, radial, and polynomial kernels, varying the cost and gamma parameters
+	\item [Adaboost + Bagging] varying the number of iterations, and the algorithm used to determine the coefficients learning algorithm
+\end{description}
+
+Then the algorithm proceeds as follows
+\begin{figure}[H]
+	\centering
+	\begin{tcolorbox}
+		\begin{algorithmic}
+			\State Split Data into \dattrain, \datval, and \dattest
+			\ForAll{$m \in Models$}
+			\State Train $m$ on \dattrain to get $m^{\star}$
+			\State \datvaltest $\leftarrow$ $Predict(m^{\star},\datval)$
+			\State \dattestpreds $\leftarrow$ $Predict(m^{\star},\dattest)$
+			\EndFor
+			%		
+			%		\State \Comment{Now \datvaltest and \dattestpreds have the original validation and testing data respectability as well as each models predictions}
+			\State BestModels $\leftarrow $ empty
+			\State nPredictors $\leftarrow$ 20
+			\For{1 $\rightarrow$ nPredictors}
+			\If{size(BestModels) == 0}
+			\State Find the most accurate model on \datval and \State put it in BestModels
+			\Else 
+			\State Find a model that predicts well  on \datval \State and is correlated small with models in BestModels.  \State Put it in BestModels.
+			\EndIf
+			\EndFor
+			\State Remove all model predictions in \datvaltest for models $\notin$ BestModels\\
+			\State Remove all model predictions in \dattestpreds for models $\notin$ BestModels\\
+			\State Train Stacked Model $\hat{SM}$ on \datvaltest\\
+			\State Final Predictions $\leftarrow Predict(\hat{SM}, \dattestpreds) $
+		\end{algorithmic}
+	\end{tcolorbox}
+\caption{Implementation of the Stacking Model Algorithm}
+\end{figure}
+
+
+
 
 \subsection{Model Results}
 
