@@ -542,24 +542,24 @@ In summary, across three different methods and variations within, we see a relat
 \subsubsection{Overview}
 When looking at our problem, we ran into an issue with the domain of the response variable (how many games a team will win in the tournament). In particular, our response variable is neither continuous (since it takes on only integer values and is bounded), nor is this a pure classification problem (because their is a natural ordering in the response). As a result, we needed to run an ordinal regression, at least at the outset, to see how well the data can be summarized with this approach before we moved on to more complicated models.  
 
-\subsubsection{Fitting the First Model}
-For the ordinal regression problem, we chose to use the \texttt{rstanarm polr} functions, as this allows us to view the posterior distributions of the coefficients, and determine the uncertainty that we have around each of our estimates. We chose to do the Bayesian variant of ordinal regression as sports data is notoriously noisy and most predictors will have little relationship with our outcome of interest. We needed to quantify errors more precisely as a result, and this method allowed us to do so. We began by standardizing the variables to avoid having the coefficients on different unit scales. We then excluded the teams names themselves to see if the other predictor variables can be used to discern performance. 
+%\subsubsection{Fitting the First Model}
+%For the ordinal regression problem, we chose to use the \texttt{rstanarm polr} functions, as this allows us to view the posterior distributions of the coefficients, and determine the uncertainty that we have around each of our estimates. We chose to do the Bayesian variant of ordinal regression as sports data is notoriously noisy and most predictors will have little relationship with our outcome of interest. We needed to quantify errors more precisely as a result, and this method allowed us to do so. We began by standardizing the variables to avoid having the coefficients on different unit scales. We then excluded the teams names themselves to see if the other predictor variables can be used to discern performance. 
+%
+%After running the model, we ran the checks on the posterior distribution, and saw that each of the four chains used have converged, there were no divergences in any of the four chains, and the tree-depth was not hit on any of the iterations, signaling that the prior distribution on $R^2$ was sufficiently informative to ensure that the chains did not explore too far from the true posterior distribution\footnote{For information on how the prior distribution of $R^2$ or on the operation of \texttt{rstanarm}, please refer to the guide here: {\color{blue} \url{https://cran.r-project.org/web/packages/rstanarm/rstanarm.pdf}}}.
+%
+%The posterior distributions for the log-odds of the parameters are as follows:
+%
+%\begin{figure}[H]
+%	\centering
+%	\input{"../fig/polr_orig_coef.txt"}
+%%	\caption{}
+%\end{figure}
+%
+%Note that the coefficients are standardized. While the coefficients do not have interpretations that are as meaningful in the units of the problem, we can use their absolute magnitude, and whether their credible intervals contain zero, to discern variables relevance in improving the odds of moving from one round to the next. If a given credible interval contains zero, we can say that it is reasonably likely that $\exp(\beta_i) = 1$ which indicates that there is reason to believe that the odds ratio is equal to one. This is equivalent to saying that there is no significant change in the odds with the use of this coefficient.
+%
+%We also see that there are some pretty strong correlations between the effective field goal percentage, total shooting percentage, and other variables. We aim to reduce the multi-collinearity in the model by removing those terms that have significant correlation with one another, and then we refit the model. 
 
-After running the model, we ran the checks on the posterior distribution, and saw that each of the four chains used have converged, there were no divergences in any of the four chains, and the tree-depth was not hit on any of the iterations, signaling that the prior distribution on $R^2$ was sufficiently informative to ensure that the chains did not explore too far from the true posterior distribution\footnote{For information on how the prior distribution of $R^2$ or on the operation of \texttt{rstanarm}, please refer to the guide here: {\color{blue} \url{https://cran.r-project.org/web/packages/rstanarm/rstanarm.pdf}}}.
-
-The posterior distributions for the log-odds of the parameters are as follows:
-
-\begin{figure}[H]
-	\centering
-	\input{"../fig/polr_orig_coef.txt"}
-%	\caption{}
-\end{figure}
-
-Note that the coefficients are standardized. While the coefficients do not have interpretations that are as meaningful in the units of the problem, we can use their absolute magnitude, and whether their credible intervals contain zero, to discern variables relevance in improving the odds of moving from one round to the next. If a given credible interval contains zero, we can say that it is reasonably likely that $\exp(\beta_i) = 1$ which indicates that there is reason to believe that the odds ratio is equal to one. This is equivalent to saying that there is no significant change in the odds with the use of this coefficient.
-
-We also see that there are some pretty strong correlations between the effective field goal percentage, total shooting percentage, and other variables. We aim to reduce the multi-collinearity in the model by removing those terms that have significant correlation with one another, and then we refit the model. 
-
-\subsubsection{Model Checking the Refit Model}
+\subsubsection{Running the Model and Model Checking}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=.6\linewidth]{../fig/polr_autocorr}
@@ -576,9 +576,9 @@ We also see that there are some pretty strong correlations between the effective
 \end{figure}
 
 
-\subsubsection{The Refit Model}
+\subsubsection{The Model}
 
-After removing the correlated variables, we refit the model and obtained the following coefficients.
+After removing the correlated variables, as we did above, we refit the model and obtained the following coefficients.
 
 \begin{figure}[H]
 	\centering
@@ -783,19 +783,23 @@ Then the algorithm proceeds as follows
 
 \subsection{Model Results}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/StackedModelAccuracy}
-	\caption{ Caption Here}
-	\label{fig:stackedmodelaccuracy}
-\end{figure}
 
 \begin{figure}[H]
 	\centering
 	\input{../fig/StackedConfMatrix.txt}
-	\caption{Caption Here}
+	\caption{The stacked model managed to get the winner of the tournament as well as $\nicefrac{25}{32}$ of the first round losses. The prediction is accurate 63\% of the time (going down the diagonal) and 91\% accurate if you consider the $\pm 1$ prediction band as accurate}
 \end{figure}
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{../fig/StackedModelAccuracy}
+	\caption{We can see a few trends in this graph. On the left axis, we can see the stacked model is the first row, and each row under it is one of the submodels. On the right pane, we have the out-of-sample prediction accuracy on the test data with the stacked model and the sub models. We can see that the sub-model greatly outperforms each of the submodels in terms of accuracy. With an accuracy of 63\%, it manages to correct the bias in each of the sub models and perform far better than any of the models that it trains off of. The plot on the left shows the accuracy if we consider $\pm 1$ as an accurate prediction. We include this metric since this is how many NCAA brackets are graded. For example, a hit would be: in reality a team makes it to the third round and we predict either a second round, third round, or forth round survival rate.}
+	\label{fig:stackedmodelaccuracy}
+\end{figure}
+
+The stacked model does an amazing job at capitalizing on the structure of the submodels and improving their out-of-sample prediction accuracy. This performance is greater than what we expected, but we should not be too surprised after we consider the $\pm1$ accuracy of each of the sub models. 
+
+We can see that each of the sub models was only off by one in either direction. By training a model that can correct their individual bias, we should expect that an ensemble model would be able to outperform any of the candidate models. 
 
 \section{Conclusion and Further Research}
 
