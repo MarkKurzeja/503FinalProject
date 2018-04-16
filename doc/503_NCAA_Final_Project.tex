@@ -206,7 +206,7 @@ The predictors can be thought of as belonging to six broad buckets corresponding
 	\item Block percentage (blk\_pct)  captures how well a team is able to block the other team's shots.
 \end{itemize}
 
-It is worth noting that the vast majority of these statistics capture how well a team performs offensively.  
+It is worth noting that the vast majority of these statistics capture how well a team performs offensively. We will be speaking to what data we would like in future analysis in our conclusion.
 
 \section{Preliminary Data Exploration}
 
@@ -278,7 +278,7 @@ A skree plot of percentage of variance explained against number of principal com
 	\label{fig:Skreeeeee}
 \end{figure}
 
-From a numeric standpoint, there is no obvious cutoff here. We do see that that the fourth principal component explains much less of the variance than the third, but it still explains about 10\% of the variance, and thus cannot be easily discarded. However, for visualization purposes we will look at plots of the data projected onto all three possible pairwise combinations of the first three principal components.
+From a numeric standpoint, there is no obvious cutoff here. We do see that the fourth principal component explains much less of the variance than the third, but it still explains about 10\% of the variance, and thus cannot be easily discarded. For visualization purposes we will look at plots of the data projected onto all three possible pairwise combinations of the first three principal components.
 
 \begin{figure}[H]
 	\centering
@@ -301,7 +301,7 @@ Plotting BIC as a function of the number of clusters $k$ for a mixture model giv
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\linewidth]{../fig/sonofaBIC}
-				\caption{BIC vs. k}
+	\caption{BIC vs. k}
 \end{figure}
 
 This turns out to be four, for a VVE model.
@@ -314,7 +314,7 @@ This turns out to be four, for a VVE model.
 			\caption{Wins by cluster and 2D MDS plot of clusters, k-Means}
 \end{figure}
 
-K-means clustering over four categories produces encouraging results similar to those of the PCA performed above. While three of the clusters seem to have generally similar proportions of teams from each win category represented, once cluster consists mainly of teams that perform very poorly.  These results are consistent across different random initialization conditions for the K-means algorithm. While three groups show similar win rates, one is a laggard.
+K-means clustering over four categories produces encouraging results similar to those of the PCA performed above. While three of the clusters seem to have generally similar proportions of teams from each win category represented, once cluster consists mainly of teams that perform very poorly.  These results are consistent across different random initialization conditions for the K-means algorithm. Three groups show similar win rates and one is a laggard.
 
 \begin{figure}[H]
 	\centering
