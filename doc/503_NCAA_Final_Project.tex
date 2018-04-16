@@ -503,15 +503,16 @@ After removing the correlated variables, as we did above, we refit the model and
 
 We began by looking for those coefficients that do not contain zero in their confidence interval. Most of the coefficients that we observed correspond to effects that were identified previously identified in principal components analysis. In summary, teams that shoot better tend to do better in the tournament. 
 
-We note that there was an interesting coefficient, and we summarize its effect below:
-\begin{description}
+We note that there was an interesting coefficient for fg3a\_per\_fga\_pct. Teams that tend to take a disproportionate number of three pointers tend to do worse in the tournament. This may be a result of the fact that three point shots are high risk, high reward, so teams that take a lot of threes may have difficulty sustaining success over many games. Increasing our amount of threes taken as a percentage of field goals by one standard deviation multiplies our likelihood (with 95\% probability) between 0.74 times and 0.93 times.
+%\begin{description}
 %	\item[ts\_pct] 
 %	Teams that tend to shoot better than other teams tend to have a higher probability of advancing in the tournament. We can see that by increasing our ts\_pct by one standard deviation, we believe that our odds will increase (with 95\% probability) between 1.13 times and 1.41 times on average. 
 %	\item[sos] This is the strength-of-schedule variable. We can see that those teams with a larger strength-of-schedule tend to do far better in the tournament. This is intuitive and is in-line with what we expect. Teams that are in more difficult conferences and make it to the tournament tend to do very well in the field.  If we increase our strength-of-schedule measure by one standard deviation, we expect our odds of moving to the next level (with 95\% probability) to increase by 2.27 times to 2.94 times.
 %	\item[games] Teams that tend to play more games throughout the season tend to move higher in the tournament. This is the ``big-team'' effect. Those teams that tend to play more games throughout the season tend to be larger schools with a larger focus on the sport of basketball. Increasing our games played by one standard deviation increases our likelihood (with 95\% probability) between 2.86 times and 3.74 times. 
-	\item[fg3a\_per\_fga\_pct] Teams that tend to take a disproportionate number of three pointers tend to do worse in the tournament. This may be a result of the fact that three point shots are high risk, high reward, so teams that take a lot of threes may have difficulty sustaining success over many games. Increasing our amount of threes taken as a percentage of field goals by one standard deviation multiplies our likelihood (with 95\% probability) between 0.74 times and 0.93 times. 
+%	\item[fg3a\_per\_fga\_pct]  
 %	\item[trb\_pct] Teams that tend to rebound more tend to do better in the tournament. A one standard deviation increase in rebounding percentage multiplies our likelihood (with 95\% probability) between 1.01 times and 1.26 times. 
-\end{description}
+%\end{description}
+
 All of the other coefficients contain zero in their confidence intervals, which indicates to that we do not have significant evidence that these predictors have an effect on the odds of a team making it to the next round of the tournament. Overall, the coefficients that were highly non-zero tend to indicate that better teams do well in the tournament, which is not really a surprise, but the sign of the coefficient on three point attempts per field goal attempt surprised us. 
 
 
@@ -662,21 +663,23 @@ This section aims to detail the search for that model and the methods employed t
 	\begin{forest}
 		[Final Predictions [\dattestpreds [\dattest] [$m^\star_1$ [\dattrain]] [$m^\star_2$ [\dattrain] ][$\cdots$][$m^\star_k$ [\dattrain]]] [Stacked Model [\datvaltest [\datval] [$m^\star_1$ [\dattrain]][$\cdots$][$m^\star_k$ [\dattrain]]] ]]
 	\end{forest}
-\caption{A visual layout of the way that a stacked model is created. By choosing models with low correlation to build off of, the stacked model is able to find which model is the ``expert'' in a given subregion of the data and up-weight the output of that model in its ensemble prediction. We then use these micro-models, in combination with the stacked model, to make predictions. }
+\caption{A Visual representation of a stacked model.}
 \end{figure}
 
 
 
 \subsection{Discussion of Implementation}
 For the stacked model, we choose to use the following components as our sub models:
-\begin{description}
-	\item [Random Forests] varying the number of variables to sample for the trees and the maximum number of nodes
-	\item [Decision Trees] varying the number of variables to use for the decisions, the maximum depth of the tree, and the minimum splitting criterion
-	\item [Ordinal Regression] varying the link function between logistic, probit, and loglog
-	\item [Multinomial Regression] with no variations
-	\item [SVM] with linear, radial, and polynomial kernels, varying the cost and gamma parameters
-	\item [Adaboost + Bagging] varying the number of iterations, and the algorithm used to determine the coefficients learning algorithm
-\end{description}
+\begin{multicols}{2}
+	\begin{enumerate}
+		\item Random Forests varying the number of variables to sample for the trees and the maximum number of nodes
+		\item Decision Trees varying the number of variables to use for the decisions, the maximum depth of the tree, and the minimum splitting criterion
+		\item Ordinal Regression varying the link function between logistic, probit, and loglog
+		\item Multinomial Regression with no variations
+		\item SVM with linear, radial, and polynomial kernels, varying the cost and gamma parameters
+		\item Adaboost + Bagging varying the number of iterations, and the algorithm used to determine the coefficients learning algorithm
+	\end{enumerate}
+\end{multicols}
 
 \subsection{Stacked Model Results}
 
