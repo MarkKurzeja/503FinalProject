@@ -19,7 +19,7 @@ theme_set(theme_grey())
 options(mc.cores = 8)
 
 # Set the working directory so that relative file paths work
-setwd("C:/Users/Mark/Dropbox/Graduate School/05) Courses/Stats 503/503FinalProject/code")
+setwd("C:/Users/Mark k/Dropbox/Graduate School/05) Courses/Stats 503/503FinalProject/code")
 
 # Read in the data
 data <- read.csv("../data/503projectdata_clean_key.csv", header = T, stringsAsFactors = F)
@@ -132,7 +132,8 @@ post0_updated_coef <- post0_updated %>% as.data.frame() %>%
     data.frame(Median = median(i), SE = sd(i), `2.5%` = quantile(i, probs = 0.025), `97.5%` = quantile(i, probs = 0.975), check.names = F)
   }) %>%
   rename(Variable = .id) %>% 
-  .[1:nvars,]
+  filter(Variable != "games") %>% #### HHHH ####
+  .[1:(nvars - 1),]
 
 sink("../fig/polr_updated_coef.txt")
 post0_updated_coef  %>% xtable::xtable() %>% print(floating = FALSE) 
@@ -158,6 +159,7 @@ post0_points <- as.matrix(post0_updated) %>%
 posterior_interval(post0_updated, prob = .95)[1:nvars,1:2] %>% 
   as.data.frame() %>% 
   mutate(param = rownames(.), median = post0_points) %>% 
+  filter(param != "games") %>% #### HHHHH####
   ggplot(.) + 
   theme_gray() +
   geom_hline(yintercept = 0) +
