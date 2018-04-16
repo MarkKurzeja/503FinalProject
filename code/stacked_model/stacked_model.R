@@ -19,6 +19,7 @@ library(e1071)
 library(party)
 library(ggplot2)
 library(tidyr)
+library(stargazer)
 library(adabag)
 
 
@@ -298,6 +299,9 @@ ggsave("../../fig/StackedModelAccuracy.pdf", device = "pdf", width = 8, height =
 
 
 # Confusion Matrix
-table(test_out$schoolwins, predict(stacked_model, test_out))
+sink("../../fig/StackedConfMatrix.txt")
+table(test_out$schoolwins, predict(stacked_model, test_out)) %>% 
+  xtable::xtable() %>% print(floating = FALSE) 
+sink()
 
 

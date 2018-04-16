@@ -187,11 +187,11 @@
  \pagenumbering{arabic} 
 \section{Background}
 \subsection{Problem Description}
-After all regularly scheduled NCAA basketball games are concluded in mid-March, 68 teams are selected to participate in the NCAA tournament. Every game is single elimination, meaning that as soon as a team loses it is eliminated from the tournament. Eight of the 68 teams originally chosen have to compete in so-called play-in games, after which 64 teams remain. We will follow the same framework as most bracket prediction contests and concern ourselves with predicting how teams will perform once the field has been narrowed down to 64 contenders. At this point there are $2^{32} \cdot 2^{16} \cdot 2^8 \cdot 2^4 \cdot 2^2 \cdot 2 = 2^{63}$ possible outcomes, which gives an idea of the scope of this challenge. Predicting a perfect bracket may be impossible, but we will see how close we can get.
+After all regularly scheduled NCAA basketball games are concluded in mid-March, 68 teams are selected to participate in the NCAA tournament. Every game is single elimination, meaning that as soon as a team loses it is eliminated from the tournament. Eight of the 68 teams originally chosen have to compete in play-in games, after which 64 teams remain. We will follow the same framework as most bracket prediction contests and concern ourselves with predicting how teams will perform once the field has been narrowed down to 64 contenders. At this point there are $2^{32} \cdot 2^{16} \cdot 2^8 \cdot 2^4 \cdot 2^2 \cdot 2 = 2^{63}$ possible outcomes, which gives an idea of the scope of this challenge. Predicting a perfect bracket may be impossible, but we will see how close we can get.
 
 \subsection{The Data Set}
 
-The first step in our analysis was gathering data. There are many decades of team performance data available on the Sports Reference college basketball website free of charge \cite{bballsite}. However, in recent years a number of more advanced metrics have been devised that have been shown to more accurately capture a team's strength. Since this data is only available starting from 1993, we limited our analysis to that timeframe. Our working data set ultimately consisted of 12 continuous quantitative predictors, and one categorical response corresponding to the number of victories a team had in the tournament (ranging from 0 for a team that lost immediately to 6 for a national champion).
+The first step in our analysis was gathering data. There are many decades of team performance data available on the Sports Reference college basketball website free of charge \cite{bballsite}. However, in recent years, a number of more advanced metrics have been devised that have been shown to more accurately capture a team's strength. Since this data is only available starting from 1993, we limited our analysis to that timeframe. Our working data set ultimately consisted of 12 continuous quantitative predictors, and one ordinal response corresponding to the number of victories a team had in the tournament (ranging from 0 for a team that lost immediately to 6 for a national champion).
 
 \subsubsection{Feature Description}
 
@@ -199,7 +199,7 @@ The predictors can be thought of as belonging to six broad buckets corresponding
 
 \begin{itemize}
 	\item Winning percentage, strength of schedule (SOS) and simple rating system (SRS) are all holistic measures.
-	\item Free throw attempt rate (ft\_rate0), free throw attempts per field goal attempt (fta\_per\_fga\_pct),  three-point attempts per field goal attempt (fg3a\_per\_fga\_pct), and assist rate (ast\_pct) all help classify a team's offensive playing style. The idea is that three-point shots are high risk and high reward while free throws are low risk and low reward. Thus teams that attempt more three point shots may have more variable performances from game to game, while teams that attempt more free throws may be more consistent. Teams with higher assist rates should be expected to play more collaboratively, while teams with low assist rates rely more on strong individual performances.
+	\item Free throw attempt rate (ft\_rate0), free throw attempts per field goal attempt (fta\_per\_fga\_pct),  three-point attempts per field goal attempt (fg3a\_per\_fga\_pct), and assist rate (ast\_pct) all help classify a team's offensive playing style. The idea is that three-point shots are high risk and high reward while free throws are low risk and low reward. Thus, teams that attempt more three point shots may have more variable performances from game to game, while teams that attempt more free throws may be more consistent. Teams with higher assist rates should be expected to play more collaboratively, while teams with low assist rates rely more on strong individual performances.
 	\item Total rebound percentage (trb\_pct) captures how well a team recovers the ball following shots missed by either themselves or their opponents.
 	\item True shooting percentage (ts\_pct) and effective field goal percentage (efg\_pct) both capture how well a team shoots the ball.
 	\item Turnover percentage (tov\_pct) captures how well a team is able to avoid allowing the other team to take the ball away (better teams should generally have lower turnover percentages).
@@ -217,14 +217,10 @@ It is worth noting that the vast majority of these statistics capture how well a
 We began by performing data exploration and visualization, as well as dimension reduction, to inform our analysis.
 
 Summaries of the predictors are provided below.
-
-
-
-\begin{table}[!htbp] \centering 
-	\caption{} 
+\begin{figure}[H]
+	\centering
 	\label{} 
 	\begin{tabular}{@{\extracolsep{5pt}}lccccc} 
-		\\[-1.8ex]\hline 
 		\hline \\[-1.8ex] 
 		Statistic & \multicolumn{1}{c}{N} & \multicolumn{1}{c}{Mean} & \multicolumn{1}{c}{St. Dev.} & \multicolumn{1}{c}{Min} & \multicolumn{1}{c}{Max} \\ 
 		\hline \\[-1.8ex] 
@@ -242,17 +238,18 @@ Summaries of the predictors are provided below.
 		ft\_rate0 & 1,636 & 0.271 & 0.037 & 0.160 & 0.430 \\ 
 		\hline \\[-1.8ex] 
 	\end{tabular} 
-\end{table} 
+	\caption{} 
+\end{figure}
 
-At a high level, the first three predictors provide a good sanity check, suggesting that teams in the tournament are generally better than average teams. The first quartile for winning percentage (percentage of games that a given team won) is well above 50\% for the teams in our data set. Our teams also generally have strength of schedule and simple rating system scores well above zero, which is to be expected given that those metrics are designed such that an average team will have a score around zero. It may seem a bit strange at first that stronger teams will tend to have a better SOS score, but this can be explained by the fact that strong teams tend to be in the same conferences as other strong teams, and therefore play other strong teams more frequently.
+At a high level, the first three predictors provide a good sanity check, suggesting that teams in the tournament are generally better than average teams. The first quartile for winning percentage (percentage of games that a given team won) is well above 50\% for the teams in our data set. Our teams also generally have strength of schedule (sos) and simple rating system (srs) score well above zero, which is to be expected given that those metrics are designed such that an average team will have a score around zero\footnote{It may seem a bit strange at first that stronger teams will tend to have a better SOS score, but this can be explained by the fact that strong teams tend to be in the same conferences as other strong teams, and therefore play other strong teams more frequently.}. 
 
-It is also worth noting that a number of the predictors have unusually large and/or small outliers. To visualize high-level trends in the predictors, boxplots of each of the predictors for each of the six tournament win groups are provided below. Some of the predictors, such as assist percentage and the two free-throw related predictors, seem to be fairly similarly distributed across the six groups. However, there are a number of pronounced patterns. For instance, more successful tournament teams generally tend to much higher win-loss percentages, SRS, and SOS scores. This is also true, although to a lesser extent, for true shooting percentage, effective field goal percentage, total rebound percentage, and block percentage. Similarly, more successful teams tend to have lower turnover rates. 
+It is also worth noting that a number of the predictors have unusually large and/or small outliers. To visualize high-level trends in the predictors, boxplots of each of the predictors for each of the six tournament win groups are provided below Figure:\eqref{fig:boxplots}. Some of the predictors, such as assist percentage and the two free-throw related predictors, seem to be fairly similarly distributed across the six groups. However, there are a number of pronounced patterns. For instance, more successful tournament teams generally tend to much higher win-loss percentages, SRS, and SOS scores. This is also true, although to a lesser extent, for true shooting percentage, effective field goal percentage, total rebound percentage, and block percentage. Similarly, more successful teams tend to have lower turnover rates. 
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\linewidth]{../fig/RayleighsWetDream.pdf}
 	\caption{caption goes here}
-	\label{fig:rayleighwetdream}
+	\label{fig:boxplots}
 \end{figure}
 
 \subsubsection{Discussion of Correlations}
@@ -506,7 +503,7 @@ We began by looking for those coefficients that do not contain zero in their con
 \begin{description}
 	\item[ts\_pct] Teams that tend to shoot better than other teams tend to have a higher probability of advancing in the tournament. We can see that by increasing our ts\_pct by one standard deviation, we believe that our odds will increase (with 95\% probability) between 1.13 times and 1.41 times on average. 
 	\item[sos] This is the strength-of-schedule variable. We can see that those teams with a larger strength-of-schedule tend to do far better in the tournament. This is intuitive and is in-line with what we expect. Teams that are in more difficult conferences and make it to the tournament tend to do very well in the field.  If we increase our strength-of-schedule measure by one standard deviation, we expect our odds of moving to the next level (with 95\% probability) to increase by 2.27 times to 2.94 times.
-	\item[games] Teams that tend to play more games throughout the season tend to move higher in the tournament. This is the ``big-team'' effect. Those teams that tend to play more games throughout the season tend to be larger schools with a larger focus on the sport of basketball. Increasing our games played by one standard deviation increases our likelihood (with 95\% probability) between 2.86 times and 3.74 times. 
+%	\item[games] Teams that tend to play more games throughout the season tend to move higher in the tournament. This is the ``big-team'' effect. Those teams that tend to play more games throughout the season tend to be larger schools with a larger focus on the sport of basketball. Increasing our games played by one standard deviation increases our likelihood (with 95\% probability) between 2.86 times and 3.74 times. 
 	\item[fg3a\_per\_fga\_pct] Teams that tend to take a disproportionate number of three pointers tend to do worse in the tournament. This may be a result of the fact that three point shots are high risk, high reward, so teams that take a lot of threes may have difficulty sustaining success over many games. Increasing our amount of threes taken as a percentage of field goals by one standard deviation multiplies our likelihood (with 95\% probability) between 0.74 times and 0.93 times. 
 	\item[trb\_pct] Teams that tend to rebound more tend to do better in the tournament. A one standard deviation increase in rebounding percentage multiplies our likelihood (with 95\% probability) between 1.01 times and 1.26 times. 
 \end{description}
