@@ -273,7 +273,7 @@ A skree plot of percentage of variance explained against number of principal com
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/Skreeeeee}
+	\includegraphics[width=0.6\linewidth]{../fig/Skreeeeee}
 	\caption{PCA skree plot}
 	\label{fig:Skreeeeee}
 \end{figure}
@@ -310,7 +310,7 @@ This turns out to be four, for a VVE model.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/clusterfun}
+	\includegraphics[width=0.5\linewidth]{../fig/clusterfun}
 			\caption{Wins by cluster and 2D MDS plot of clusters, k-Means}
 \end{figure}
 
@@ -336,17 +336,19 @@ The clustering here appears somewhat ambiguous, with an average silhouette width
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/areyouheigh}
+	\includegraphics[width=0.5\linewidth]{../fig/areyouheigh}
 		\caption{2D MDS plots of clusters: single linkage, complete linkage, and Ward's method, Euclidean distance}
 \end{figure}
 
-We next explore what hierarchical clustering can tell us about the data. When hierarchical clustering is performed using Euclidean distances and either complete linkage or Ward's method, we see a result fairly similar to that obtained from k-means.  Single linkage, however, maps everything except for two isolated observations into a single cluster. It appears that the heavy degree of noise in our dataset prevents a more meaningful clustering under the latter dissimilarity measure.
+We next explore what hierarchical clustering can tell us about the data. When hierarchical clustering is performed using Euclidean distances and either complete linkage or Ward's method, we see a result fairly similar to that obtained from k-means.  Single linkage, however, maps everything except for three isolated observations into a single cluster. After investigating these points, these data points just have extreme values in one or more predictors but do not show an interesting relationship with the response variable of interest. It appears that the heavy degree of noise in our dataset prevents a more meaningful clustering under the latter dissimilarity measure.
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/comp1}
-		\caption{Wins by cluster and 2D MDS plot of clusters, complete linkage, Euclidean distance}
-\end{figure}
+Since we observed similar results using Ward's method and Euclidean measures, we have omitted our plot of Ward's Method for brevity. 
+
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=0.7\linewidth]{../fig/comp1}
+%		\caption{Wins by cluster and 2D MDS plot of clusters, complete linkage, Euclidean distance}
+%\end{figure}
 
 \begin{figure}[H]
 	\centering
@@ -354,11 +356,11 @@ We next explore what hierarchical clustering can tell us about the data. When hi
 		\caption{Wins by cluster and 2D MDS plot of clusters, Ward's method, Euclidean distance}
 \end{figure}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/compweak}
-		\caption{Standardized mean difference from full data, complete linkage, Euclidean distance}
-\end{figure}
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=0.7\linewidth]{../fig/compweak}
+%		\caption{Standardized mean difference from full data, complete linkage, Euclidean distance}
+%\end{figure}
 
 \begin{figure}[H]
 	\centering
@@ -367,7 +369,8 @@ We next explore what hierarchical clustering can tell us about the data. When hi
 \end{figure}
 
 
-As noted above, the complete linkage and Ward's method clusters are very similar to the k-means clusters we obtained, although in the case of Ward's method one cluster contains a majority of the data. Once again, one of the clusters contains mostly teams that would be expected to perform poorly from a conceptual standpoint. This pattern is particularly extreme when using complete linkage.
+As noted above, the complete linkage are very similar to the k-means clusters we obtained.
+Once again, one of the clusters contains mostly teams that would be expected to perform poorly from a conceptual standpoint. This pattern is particularly extreme when using complete linkage.
 
 \begin{figure}[H]
 	\centering
@@ -375,15 +378,15 @@ As noted above, the complete linkage and Ward's method clusters are very similar
 		\caption{Silhouette plot, complete linkage, Euclidean distance}
 \end{figure}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.5\linewidth]{"../fig/wardsil"}
-		\caption{Silhouette plot, Ward's method, Euclidean distance}
-\end{figure}
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=0.5\linewidth]{"../fig/wardsil"}
+%		\caption{Silhouette plot, Ward's method, Euclidean distance}
+%\end{figure}
 
-The silhouettes for these methods show much more ambiguity than in k-means: complete linkages have an average width of 0.07, and Ward's method gives an average width of .08, both with striking potential for misclustering in clusters 1 and 4.  On the whole, these appear to be less suitable than the clusters obtained from K-means.
+The silhouettes for this method shows much more ambiguity than in k-means with an average width of 0.07, with striking potential for misclustering in clusters 1 and 4.  On the whole, these appear to be less suitable than the clusters obtained from K-means.
 
-Extending this analysis via alternative distance measures produces highly consistent results.  Changing the distance metric to Manhattan or Gower distances produced no meaningful changes in the the clusters and saw lower average silhouette widths.  These results have been omitted for the sake of brevity and available on request.
+Extending this analysis via alternative distance measures produces highly consistent results.  Changing the distance metric to Manhattan or Gower distances produced no meaningful changes in the the clusters and produced lower average silhouette widths.  These results have been omitted for the sake of brevity and are available on request.
 
 \subsubsection{Mixture Modeling}
 
@@ -411,7 +414,7 @@ Returning to our original mixture model, recall that BIC was maximized for a VVE
 	\end{tabular}
 \end{table}
 
-The third component appears roughly consistent with the characteristics of weak clusters we observed under previous methods.  This notion is confirmed by plotting the clusters against wins and 2D MDS plots per earlier.  
+The third component appears roughly consistent with the characteristics of the weak clusters we observed using K-Means and hierarchal clustering.  This notion is confirmed by plotting the clusters against wins and 2D MDS plots as was done previously in the analysis.  
 
 \begin{figure}[H]
 	\centering
@@ -421,25 +424,25 @@ The third component appears roughly consistent with the characteristics of weak 
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/mixweak}
+	\includegraphics[height=5cm]{../fig/mixweak}
 	\caption{Standardized mean difference from full data, Mixture Model}
 \end{figure}
 
-As we can see, the third components relationship with winning games, the MDS components, and the predictors all appear highly similar to the least-winning cluster or clusters observed in the previous methods.
+As we can see, the third component's relationship with winning games, the MDS components, and the predictors all appear highly similar to the least-winning cluster or clusters observed earlier.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.5\linewidth]{"../fig/mixsil"}
+	\includegraphics[height=5cm]{"../fig/mixsil"}
 	\caption{Silhouette plot, Mixture Model}
 \end{figure}
 
 The silhouette plot of our mixture model shows the lowest average silhouette width, tied with the Ward's method and Gower distance pair in a hierarchical clustering.
 
-In summary, across three different methods and variations within, we see a relatively consistent clustering showing teams with very low SRS and SOS, below-average Blocks, Rebounds, and Win rates, and above typical Turnover Percentage are associated with failing to pass the Sweet 16.  Of our methods, k-Means appeared to return the least ambiguous clusters.
+In summary, we see a relatively consistent clustering showing that teams with very low SRS and SOS, below-average Blocks, Rebounds, and Win rates, and typical large Turnover Percentage are associated with failing to pass the Sweet 16.  Of our methods, k-Means appeared to return the least ambiguous clusters.
 
 \subsection{Ordinal Regression}
 \subsubsection{Overview}
-When looking at our problem, we ran into an issue with the domain of the response variable (how many games a team will win in the tournament). In particular, our response variable is neither continuous (since it takes on only integer values and is bounded), nor is this a pure classification problem (because their is a natural ordering in the response). As a result, we needed to run an ordinal regression, at least at the outset, to see how well the data can be summarized with this approach before we moved on to more complicated models.  
+When looking at our problem, we ran into an issue with the domain of the response variable (how many games a team will win in the tournament). In particular, our response variable is not continuous nor is this a pure classification problem (because their is a natural ordering in the response). As a result, we decided to run an ordinal regression to see how well the data can be summarized with this approach before we moved on to more complicated models.  
 
 %\subsubsection{Fitting the First Model}
 %For the ordinal regression problem, we chose to use the \texttt{rstanarm polr} functions, as this allows us to view the posterior distributions of the coefficients, and determine the uncertainty that we have around each of our estimates. We chose to do the Bayesian variant of ordinal regression as sports data is notoriously noisy and most predictors will have little relationship with our outcome of interest. We needed to quantify errors more precisely as a result, and this method allowed us to do so. We began by standardizing the variables to avoid having the coefficients on different unit scales. We then excluded the teams names themselves to see if the other predictor variables can be used to discern performance. 
@@ -466,13 +469,13 @@ When looking at our problem, we ran into an issue with the domain of the respons
 %	\label{fig:polr_autocorrelation}
 %\end{figure}
 
-The autocorrelation plots, posterior summary statistics, R-hat metric, and Hamiltonian Energy was checked to ensure that the posterior did indeed converge. There were no divergent chains and no chain hit the treedepth for the Stan algorithm. As a result, we are able to proceed with the analysis.
+The autocorrelation plots, posterior summary statistics, R-hat metric, and Hamiltonian Energy were checked to ensure that the posterior did, indeed, converge. There were no divergent chains and no chain hit the treedepth for the Stan algorithm. As a result, we are able to proceed with the analysis.
 
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{../fig/polr_nonames_pp}
-	\caption{This is a summary of the posterior predictive distribution for the first model that we ran with ordinal regression. We can see that the posterior is one of seven counts, and that if we run simulation from the predictive posterior, the resulting counds are in line with what we observed. This indicates that the model is capturing the frequency of the counts in its inference, which is important if we are not going to under bias or over bias any particular outcome. We can see especially at $wins = 0$ that the count is bias downwards, however, which makes sense given the imbalance of the representation of the zero count variables.}
+	\includegraphics[height=4cm]{../fig/polr_nonames_pp}
+	\caption{This is a summary of the posterior predictive distribution for the first model that we ran with ordinal regression. We can see that the posterior is one of seven counts, and that if we run simulation from the predictive posterior, the resulting counts are in line with what we observed. This indicates that the model is capturing the frequency of the counts in its inference, which is important if we are not going to under bias or over bias any particular outcome. We can see especially at $wins = 0$ that the count is bias downwards, however, which makes sense given the imbalance of the representation of the zero count variables.}
 	\label{fig:polrnonamespp}
 \end{figure}
 
@@ -489,7 +492,7 @@ After removing the correlated variables, as we did above, we refit the model and
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\linewidth]{../fig/polr_coef}
+	\includegraphics[height=6cm]{../fig/polr_coef}
 	\caption{The standard errors, after removing the collinear variables is far more manageable.}
 	\label{fig:polr_coef}
 \end{figure}
@@ -498,14 +501,16 @@ After removing the correlated variables, as we did above, we refit the model and
 
 \subsubsection{Interpretation of the Coefficients}
 
-We began by looking for those coefficients that do not contain zero in their confidence interval.
+We began by looking for those coefficients that do not contain zero in their confidence interval. Most of the coefficients that we observed correspond to effects that were identified previously identified in principal components analysis. In summary, teams that shoot better tend to do better in the tournament. 
 
+We note that there was an interesting coefficient, and we summarize its effect below:
 \begin{description}
-	\item[ts\_pct] Teams that tend to shoot better than other teams tend to have a higher probability of advancing in the tournament. We can see that by increasing our ts\_pct by one standard deviation, we believe that our odds will increase (with 95\% probability) between 1.13 times and 1.41 times on average. 
-	\item[sos] This is the strength-of-schedule variable. We can see that those teams with a larger strength-of-schedule tend to do far better in the tournament. This is intuitive and is in-line with what we expect. Teams that are in more difficult conferences and make it to the tournament tend to do very well in the field.  If we increase our strength-of-schedule measure by one standard deviation, we expect our odds of moving to the next level (with 95\% probability) to increase by 2.27 times to 2.94 times.
+%	\item[ts\_pct] 
+%	Teams that tend to shoot better than other teams tend to have a higher probability of advancing in the tournament. We can see that by increasing our ts\_pct by one standard deviation, we believe that our odds will increase (with 95\% probability) between 1.13 times and 1.41 times on average. 
+%	\item[sos] This is the strength-of-schedule variable. We can see that those teams with a larger strength-of-schedule tend to do far better in the tournament. This is intuitive and is in-line with what we expect. Teams that are in more difficult conferences and make it to the tournament tend to do very well in the field.  If we increase our strength-of-schedule measure by one standard deviation, we expect our odds of moving to the next level (with 95\% probability) to increase by 2.27 times to 2.94 times.
 %	\item[games] Teams that tend to play more games throughout the season tend to move higher in the tournament. This is the ``big-team'' effect. Those teams that tend to play more games throughout the season tend to be larger schools with a larger focus on the sport of basketball. Increasing our games played by one standard deviation increases our likelihood (with 95\% probability) between 2.86 times and 3.74 times. 
 	\item[fg3a\_per\_fga\_pct] Teams that tend to take a disproportionate number of three pointers tend to do worse in the tournament. This may be a result of the fact that three point shots are high risk, high reward, so teams that take a lot of threes may have difficulty sustaining success over many games. Increasing our amount of threes taken as a percentage of field goals by one standard deviation multiplies our likelihood (with 95\% probability) between 0.74 times and 0.93 times. 
-	\item[trb\_pct] Teams that tend to rebound more tend to do better in the tournament. A one standard deviation increase in rebounding percentage multiplies our likelihood (with 95\% probability) between 1.01 times and 1.26 times. 
+%	\item[trb\_pct] Teams that tend to rebound more tend to do better in the tournament. A one standard deviation increase in rebounding percentage multiplies our likelihood (with 95\% probability) between 1.01 times and 1.26 times. 
 \end{description}
 All of the other coefficients contain zero in their confidence intervals, which indicates to that we do not have significant evidence that these predictors have an effect on the odds of a team making it to the next round of the tournament. Overall, the coefficients that were highly non-zero tend to indicate that better teams do well in the tournament, which is not really a surprise, but the sign of the coefficient on three point attempts per field goal attempt surprised us. 
 
@@ -532,14 +537,8 @@ In summary, our overall in-sample error rates for ordinal regression are below.
 		Prediction $<$ Actual Error Rate & 33.89\%\\ 
 		\bottomrule
 	\end{tabular}
-	\caption{For a simple algorithm, the fact that we are seeing over 55\% prediction accuracy on a seven-dimensional confusion matrix, and achieving almost 90\% accuracy on a plus / minus one prediction basis on very noisy data set is an accomplishment in and of itself. The downward bias of the model is evident in the fact that almost 34\% of the predictions were under the actual result, and so this is something that we will need to take into account when using the model for prediction}
+	\caption{For a simple algorithm, the fact that we are seeing over 55\% prediction accuracy on a seven-dimensional confusion matrix, and achieving almost 90\% accuracy on a plus / minus one prediction basis on very noisy data set is an accomplishment in and of itself. The downward bias of the model is evident in the fact that almost 34\% of the predictions were under the actual result,  so this is something that we will need to take into account when using the model for prediction}
 \end{figure}
-
-
-
-
-
-
 
 
 
@@ -588,9 +587,9 @@ In summary, our overall in-sample error rates for ordinal regression are below.
 \section{Ensemble Prediction Model}
 \subsection{Introduction}
 
-We have now seen the predictive ability in both ordinal regression and in some of the methods introduced in the data-exploration. Having looked at the problem for some time, and made inferences about the parameters and the way that the data interacts with how far someone goes in the tournament, we now look for a potential black-box model that may be able to outperform the native methods in terms of predictive accuracy. 
+We have now seen the predictive ability in both ordinal regression and in some of the methods introduced in the data-exploration. Having looked at the problem for some time, and having made inferences about the parameters and the way that the data interacts with how far someone goes in the tournament, we now look for a potential black-box model that may be able to outperform the native methods in terms of predictive accuracy. 
 
-This section aims to detail the search for that model and the methods employed to get the most predictive accuracy that we can out of several models. We aim to use an ensemble model to bring in multiple players into the act, and our hope is that this model can outperform the methods that we have already seen thus far. 
+This section aims to detail the search for that model and the methods employed to get the most predictive accuracy that we can out of several models. We aim to use an ensemble model with the hope that this model can outperform the methods that we have  seen thus far. 
 
 \subsection{Discussion of Stacking}
 
@@ -626,36 +625,36 @@ This section aims to detail the search for that model and the methods employed t
 	\item Use the stacked classifier as well as the $m^{\star}$ models to make predictions for \dattest
 \end{enumerate} 
 
-Then the algorithm proceeds as follows
-\begin{figure}[H]
-	\centering
-	\begin{tcolorbox}
-		\begin{algorithmic}
-			\State Split Data into \dattrain, \datval, and \dattest
-			\ForAll{$m \in Models$}
-			\State Train $m$ on \dattrain to get $m^{\star}$
-			\State \datvaltest $\leftarrow$ $Predict(m^{\star},\datval)$
-			\State \dattestpreds $\leftarrow$ $Predict(m^{\star},\dattest)$
-			\EndFor
-			%		
-			%		\State \Comment{Now \datvaltest and \dattestpreds have the original validation and testing data respectability as well as each models predictions}
-			\State BestModels $\leftarrow $ empty
-			\State nPredictors $\leftarrow$ 20
-			\For{1 $\rightarrow$ nPredictors}
-			\If{size(BestModels) == 0}
-			\State Find the most accurate model on \datval and \State put it in BestModels
-			\Else 
-			\State Find a model that predicts well  on \datval \State and is correlated small with models in BestModels.  \State Put it in BestModels.
-			\EndIf
-			\EndFor
-			\State Remove all model predictions in \datvaltest for models $\notin$ BestModels\\
-			\State Remove all model predictions in \dattestpreds for models $\notin$ BestModels\\
-			\State Train Stacked Model $\hat{SM}$ on \datvaltest\\
-			\State Final Predictions $\leftarrow Predict(\hat{SM}, \dattestpreds) $
-		\end{algorithmic}
-	\end{tcolorbox}
-	\caption{Implementation of the Stacking Model Algorithm}
-\end{figure}
+%Then the algorithm proceeds as follows
+%\begin{figure}[H]
+%	\centering
+%	\begin{tcolorbox}
+%		\begin{algorithmic}
+%			\State Split Data into \dattrain, \datval, and \dattest
+%			\ForAll{$m \in Models$}
+%			\State Train $m$ on \dattrain to get $m^{\star}$
+%			\State \datvaltest $\leftarrow$ $Predict(m^{\star},\datval)$
+%			\State \dattestpreds $\leftarrow$ $Predict(m^{\star},\dattest)$
+%			\EndFor
+%			%		
+%			%		\State \Comment{Now \datvaltest and \dattestpreds have the original validation and testing data respectability as well as each models predictions}
+%			\State BestModels $\leftarrow $ empty
+%			\State nPredictors $\leftarrow$ 20
+%			\For{1 $\rightarrow$ nPredictors}
+%			\If{size(BestModels) == 0}
+%			\State Find the most accurate model on \datval and \State put it in BestModels
+%			\Else 
+%			\State Find a model that predicts well  on \datval \State and is correlated small with models in BestModels.  \State Put it in BestModels.
+%			\EndIf
+%			\EndFor
+%			\State Remove all model predictions in \datvaltest for models $\notin$ BestModels\\
+%			\State Remove all model predictions in \dattestpreds for models $\notin$ BestModels\\
+%			\State Train Stacked Model $\hat{SM}$ on \datvaltest\\
+%			\State Final Predictions $\leftarrow Predict(\hat{SM}, \dattestpreds) $
+%		\end{algorithmic}
+%	\end{tcolorbox}
+%	\caption{Implementation of the Stacking Model Algorithm}
+%\end{figure}
 
 \subsection{Visual Depiction of Stacking}
 \begin{figure}[H]
@@ -679,17 +678,12 @@ For the stacked model, we choose to use the following components as our sub mode
 	\item [Adaboost + Bagging] varying the number of iterations, and the algorithm used to determine the coefficients learning algorithm
 \end{description}
 
-
-
-
-
-
 \subsection{Stacked Model Results}
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\linewidth]{../fig/StackedModelAccuracy}
-	\caption{We can see a few trends in this graph. On the left axis, we can see the stacked model is the first row, and each row under it is one of the submodels. On the right pane, we have the out-of-sample prediction accuracy on the test data with the stacked model and the sub models. We can see that the sub-model greatly outperforms each of the submodels in terms of accuracy. With an accuracy of 63\%, it manages to correct the bias in each of the sub models and perform far better than any of the models that it trains off of. The plot on the left shows the accuracy if we consider $\pm 1$ as an accurate prediction. We include this metric since this is how many NCAA brackets are graded. For example, a hit would be: in reality a team makes it to the third round and we predict either a second round, third round, or forth round survival rate.}
+	\caption{We can see a few trends in this graph. On the vertical axis, we can see the stacked model is the first row, and each row under it is one of the sub-models. On the right pane, we have the out-of-sample prediction accuracy on the test data with the stacked model and the sub models. We can see that the stacked model greatly outperforms each of the sub-models in terms of accuracy.  The plot on the left shows the accuracy if we consider $\pm 1$ as an accurate prediction. We include this metric since this is how many NCAA brackets are graded. For example, a hit would be: in reality a team makes it to the third round and we predict either a second round, third round, or forth round finish.}
 	\label{fig:stackedmodelaccuracy}
 \end{figure}
 
@@ -700,7 +694,7 @@ For the stacked model, we choose to use the following components as our sub mode
 \end{figure}
 
 
-The stacked model does an amazing job at capitalizing on the structure of the submodels and improving their out-of-sample prediction accuracy. This performance is greater than what we expected, but we should not be too surprised after we consider the $\pm1$ accuracy of each of the sub models. 
+The stacked model does an amazing job of capitalizing on the structure of the sub-models and improving their out-of-sample prediction accuracy. This performance is greater than what we expected, but we should not be too surprised after we consider the $\pm1$ accuracy of each of the sub models. 
 
 We can see that each of the sub models was only off by one in either direction. By training a model that can correct their individual bias, we should expect that an ensemble model would be able to outperform any of the candidate models that the stacked model was trained on. 
 
